@@ -10,6 +10,8 @@ while True:
     
    # cut = frame[50 : 300 , 50 : 350]
 
+   #YES WE CAN
+
     gris = cv2.cvtColor(cut ,cv2.COLORBGR2GRAY)
     gris = cv2.GaussianBlur(gris , (7,7),0)
     _,threshold = cv2.threshold(gris ,30  , 255 , cv2.THRESH_BINARYINV);
