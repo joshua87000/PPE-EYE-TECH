@@ -1,17 +1,17 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture(r"C:\Users\Joshua\Downloads\OPENCV\videoEyeAF.avi")
-#cap = cv2.VideoCapture(2)
+#cap = cv2.VideoCapture(r"C:\Users\Joshua\Downloads\OPENCV\videoEyeAF.avi")
+cap = cv2.VideoCapture(2)
 
 seuil = 25
 
 while True:
     ret,frame = cap.read()
     cut = frame
-    cut = frame[50 : 300 , 50 : 350]
+    #cut = frame[50 : 300 , 50 : 350]
 
-    rows, cols, _  = cut.shape
+    #rows, cols, _  = cut.shape
 
     gris = cv2.cvtColor(cut ,cv2.COLOR_BGR2GRAY)
     gris = cv2.GaussianBlur(gris , (7,7),0)
@@ -27,8 +27,8 @@ while True:
         #cv2.drawContours(cut,[cnt], -1 , (0 , 0 , 255) , 2)
         cv2.rectangle(cut , (x,y),(x+w, y+h),(255,0,0),2)
 
-        cv2.line(cut,(x + int(w/2),0) , (x + int(w/2), rows),(0,255,0),2)
-        cv2.line(cut,(0,y + int(h/2)) , (cols,y + int(h/2) ),(0,255,0),2)
+        #cv2.line(cut,(x + int(w/2),0) , (x + int(w/2), rows),(0,255,0),2)
+        #cv2.line(cut,(0,y + int(h/2)) , (cols,y + int(h/2) ),(0,255,0),2)
         print(w)
 
         break
