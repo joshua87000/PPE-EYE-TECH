@@ -3,6 +3,7 @@ import numpy as np
 import dlib
 import time
 import math
+import functools
 
 class Point:
     def __init__(self, land, nmb):
@@ -16,6 +17,9 @@ class Point:
         return p
     fromcoord = classmethod(fromcoord)
 
+def onMouseClick(event, x, y, flags, param,add):
+    if event == cv2.EVENT_LBUTTONUP:
+        print(add)
 
 def distance_entre_points(point1, point2):
     distance = math.sqrt((point2.px - point1.px)**2 + (point2.py - point1.py)**2)
@@ -51,6 +55,12 @@ while True:
 
     faces = detector(gray)
 
+    RightTop = 1
+    RightBottom =0
+    LeftTop = 0
+    LeftBottom = 0
+    
+   
     for face in faces:
         
         x, y = face.left() , face.top()
@@ -94,14 +104,21 @@ while True:
         cv2.line(treshold_eye, (0,int(height/2)), (width,int(height/2)),(0,255,0), 2)
         cv2.line(treshold_eye, (int(width/2),0), (int(width/2),height),(0,255,0), 2)
 
-        print(height)
-        print(int(height/2))
-        print("---")
+    
 
         region1 = treshold_eye[0 : int(height/2) ,0 : int(width/2)]
         region4 = treshold_eye[int(height/2) : height ,int(width/2) :width]
         region2 = treshold_eye[0 : int(height/2) ,int(width/2) :width]
         region3 = treshold_eye[int(height/2) : height ,0 : int(width/2)]
+
+       
+        LeftTop = round((cv2.countNonZero(region1) / (region1.shape[0]*region1.shape[1]))*100,2)
+        RightTop = round((cv2.countNonZero(region2) / (region2.shape[0]*region2.shape[1]))*100,2)
+        LeftBottom = round((cv2.countNonZero(region3) / (region2.shape[0]*region3.shape[1]))*100,2)
+        RightBottom = round((cv2.countNonZero(region4) / (region2.shape[0]*region4.shape[1]))*100,2)
+
+
+        
         
         
        
@@ -139,12 +156,13 @@ while True:
 
 
         #cv2.line(frame, (p3.px,p3.py), (p4.px,p4.py), (0, 255, 0), 2)
-
+        
         cv2.imshow("Eye",treshold_eye)
         cv2.imshow("Region 1 ",region1)
         cv2.imshow("Region 2",region2)
         cv2.imshow("Region 3 ",region3)
         cv2.imshow("Region 4",region4)
+        
         
 
 
@@ -154,7 +172,14 @@ while True:
     sfps = fps / (time.time() - start_time)
     cv2.putText(frame, "FPS : " + str(int(sfps)), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-    cv2.imshow("Frame",frame)
+    cv2.namedWindow("image")
+
+    txt =" LT = " + str(LeftTop) + "% RT = " + str(RightTop) +"% LB = " + str(LeftBottom) + "% RB = " + str(RightBottom)
+    cv2.setMouseCallback("image", functools.partial(onMouseClick, add=txt))
+     
+   
+
+    cv2.imshow("image",frame)
    
    
 
