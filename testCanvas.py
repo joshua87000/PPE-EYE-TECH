@@ -171,6 +171,7 @@ while running:
                 L3 = font.render(t3, True, (0, 0, 0))
                 L4 = font.render(t4, True, (0, 0, 0))
             if event.key == pygame.K_RIGHT:
+                step = 0
                 txt = txt + t2
                 text = font2.render(txt, True, (0, 0, 0))
                 text_rect = text.get_rect()
@@ -182,6 +183,7 @@ while running:
                 L3 = font.render(t3, True, (0, 0, 0))
                 L4 = font.render(t4, True, (0, 0, 0))
             if event.key == pygame.K_DOWN:
+                step = 0
                 txt = txt + t3
                 text = font2.render(txt, True, (0, 0, 0))
                 text_rect = text.get_rect()
@@ -193,6 +195,7 @@ while running:
                 L3 = font.render(t3, True, (0, 0, 0))
                 L4 = font.render(t4, True, (0, 0, 0))
             if event.key == pygame.K_UP:
+                step = 0
                 txt = txt + t1
                 text = font2.render(txt, True, (0, 0, 0))
                 text_rect = text.get_rect()
@@ -204,6 +207,7 @@ while running:
                 L3 = font.render(t3, True, (0, 0, 0))
                 L4 = font.render(t4, True, (0, 0, 0))
             if event.key == pygame.K_LEFT:
+                step = 0
                 txt = txt + t4
                 text = font2.render(txt, True, (0, 0, 0))
                 text_rect = text.get_rect()
@@ -214,6 +218,21 @@ while running:
                 L2 = font.render(t2, True, (0, 0, 0))
                 L3 = font.render(t3, True, (0, 0, 0))
                 L4 = font.render(t4, True, (0, 0, 0))
+            if event.key == pygame.K_DELETE:
+                step = 0 
+                txt = txt[:1]
+                last = txt[-1]
+                text = font2.render(txt, True, (0, 0, 0))
+                text_rect = text.get_rect()
+                text_rect.center = (px,py)
+                t1,t2,t3,t4 = getSuiavnt(step,last,C)
+                L1 = font.render(t1, True, (0, 0, 0))
+                L2 = font.render(t2, True, (0, 0, 0))
+                L3 = font.render(t3, True, (0, 0, 0))
+                L4 = font.render(t4, True, (0, 0, 0))
+
+
+
 
                
                 
