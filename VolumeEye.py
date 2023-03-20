@@ -5,6 +5,7 @@ import time
 import math
 import functools
 import pyautogui
+import subprocess
 
 class Point:
     def __init__(self, land, nmb):
@@ -48,6 +49,12 @@ cap = cv2.VideoCapture(1)
 fps = 0
 start_time = time.time()
 
+temps1L = time.time()
+doubleCloseL = 0
+
+temps1R = time.time()
+doubleCloseR = 0
+
 while True:
     _, frame = cap.read()
 
@@ -66,32 +73,103 @@ while True:
      
         landmarks = predictor(gray,face)
 
-        p1 = Point(landmarks,37)
-        p2 = Point(landmarks,38)
-        p3 = Point(landmarks,41)
-        p4 = Point(landmarks,40)
+        p1L = Point(landmarks,37)
+        p2L = Point(landmarks,38)
+        p3L = Point(landmarks,41)
+        p4L = Point(landmarks,40)
 
-        Pgauche = Point(landmarks,36)
-        Pdroite = Point(landmarks,39)
+        p1R = Point(landmarks,43)
+        p2R = Point(landmarks,44)
+        p3R = Point(landmarks,47)
+        p4R = Point(landmarks,46)
+
+
+
+        for i in range(68):
+            P = Point(landmarks,i)
+            cv2.circle(frame,(P.px,P.py),1,(0, 0, 255),1)
+
+        PgaucheL = Point(landmarks,36)
+        PdroiteL = Point(landmarks,39)
+
+        PgaucheR = Point(landmarks,42)
+        PdroiteR = Point(landmarks,45)
 
         visageHaut = Point(landmarks,19)
 
 
-        midHaut = Point.fromcoord(int((p1.px + p2.px)/2), int((p1.py + p2.py)/2),landmarks,0)
-        midBas = Point.fromcoord(int((p3.px + p4.px)/2), int((p3.py + p4.py)/2),landmarks,0)
+        midHautL = Point.fromcoord(int((p1L.px + p2L.px)/2), int((p1L.py + p2L.py)/2),landmarks,0)
+        midBasL = Point.fromcoord(int((p3L.px + p4L.px)/2), int((p3L.py + p4L.py)/2),landmarks,0)
+
+        midHautR = Point.fromcoord(int((p1R.px + p2R.px)/2), int((p1R.py + p2R.py)/2),landmarks,0)
+        midBasR = Point.fromcoord(int((p3R.px + p4R.px)/2), int((p3R.py + p4R.py)/2),landmarks,0)
 
 
-        ratio= distance_entre_points(Pgauche,Pdroite)/distance_entre_points(midHaut,midBas)
+        ratioL = distance_entre_points(PgaucheL,PdroiteL)/distance_entre_points(midHautL,midBasL)
+        ratioR = distance_entre_points(PgaucheR,PdroiteR)/distance_entre_points(midHautR,midBasR)
+
+
     
 
-        if ratio > 6:
+        if ratioL > 6:
               cv2.putText(frame, "blink", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-              pyautogui.press('volumedown')
+              if(doubleCloseL == 0):
+                  time1L = time.time()
+                  doubleCloseL = 1
 
-        if ratio < 3:
+              elif(doubleCloseL == 2):
+                  difference = time.time()-time1L
+                  print("double")
+                  doubleCloseL = 3
+                  #subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
+                  pyautogui.press('volumedown')
+                 
+        else:
+            if(doubleCloseL == 1):
+                doubleCloseL = 2
+            elif(doubleCloseL == 3):
+                doubleCloseL = 0
+                
+        if(doubleCloseL == 2 and (time.time() - time1L) > 0.5):
+            doubleCloseL = 0
+            print("simple L - ")
+            print(time.time() - time1L)
+
+
+
+        if ratioR > 6:
+                cv2.putText(frame, "blink", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                if(doubleCloseR == 0):
+                    time1R = time.time()
+                    doubleCloseR = 1
+
+                elif(doubleCloseR == 2):
+                    difference = time.time()-time1R
+                    print("double")
+                    doubleCloseR = 3
+                    #subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
+                    pyautogui.press('volumeup')
+                    
+        else:
+            if(doubleCloseR == 1):
+                    doubleCloseR = 2
+            elif(doubleCloseR == 3):
+                    doubleCloseR = 0
+                    
+            if(doubleCloseR == 2 and (time.time() - time1R) > 0.5):
+                doubleCloseR = 0
+                print("simple R - ")
+                print(time.time() - time1R)
+
+            
+            
+                
+
+
+        if ratioL < 3:
               cv2.putText(frame, "Big", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-              print("Up")
-              pyautogui.press('volumeup')
+             
+              
 
 
    
