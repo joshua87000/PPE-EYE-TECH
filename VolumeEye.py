@@ -6,6 +6,7 @@ import math
 import functools
 import pyautogui
 import subprocess
+import win32gui
 
 class Point:
     def __init__(self, land, nmb):
@@ -54,6 +55,12 @@ doubleCloseL = 0
 
 temps1R = time.time()
 doubleCloseR = 0
+open = 0
+count = 0
+timeTurn = time.time()
+turnLeft = 0
+minTurn = 100
+maxTurn = 0
 
 while True:
     _, frame = cap.read()
@@ -83,11 +90,51 @@ while True:
         p3R = Point(landmarks,47)
         p4R = Point(landmarks,46)
 
+        scale1 = Point(landmarks,27)
+        scale2 = Point(landmarks,28)
+
+        scale = distance_entre_points(scale1,scale2)
+
+
+        midHautL = Point.fromcoord(int((p1L.px + p2L.px)/2), int((p1L.py + p2L.py)/2),landmarks,0)
+        midBasL = Point.fromcoord(int((p3L.px + p4L.px)/2), int((p3L.py + p4L.py)/2),landmarks,0)
+
+        midHautR = Point.fromcoord(int((p1R.px + p2R.px)/2), int((p1R.py + p2R.py)/2),landmarks,0)
+        midBasR = Point.fromcoord(int((p3R.px + p4R.px)/2), int((p3R.py + p4R.py)/2),landmarks,0)
+
+        noz = Point(landmarks,33)
+
+        mouthL = Point(landmarks,48)
+        mouthR = Point(landmarks,54)
+
+        mouthTop = Point(landmarks,51)
+        mouthBot = Point(landmarks,57)
+
+        ratioMouth = distance_entre_points(mouthL,mouthR)/scale
+
+        draw_line_between_points(Point(landmarks,31),Point(landmarks,2),frame)
+        draw_line_between_points(Point(landmarks,35),Point(landmarks,14),frame)
+
+       
+
+        ratioNozL =distance_entre_points(mouthL,noz)/distance_entre_points(midHautL,midBasL)
+        #print(ratioNozL)
+       
+
+        
+            
+
+        #draw_line_between_points(mouthBot,mouthTop,frame)
+        #draw_line_between_points(mouthL,mouthR,frame)
+        #draw_line_between_points(mouthL,noz,frame)
+        #draw_line_between_points(mouthR,noz,frame)
+        
+
 
 
         for i in range(68):
             P = Point(landmarks,i)
-            cv2.circle(frame,(P.px,P.py),1,(0, 0, 255),1)
+            cv2.circle(frame,(P.px,P.py),3,(0, 0, 255),1)
 
         PgaucheL = Point(landmarks,36)
         PdroiteL = Point(landmarks,39)
@@ -98,11 +145,52 @@ while True:
         visageHaut = Point(landmarks,19)
 
 
-        midHautL = Point.fromcoord(int((p1L.px + p2L.px)/2), int((p1L.py + p2L.py)/2),landmarks,0)
-        midBasL = Point.fromcoord(int((p3L.px + p4L.px)/2), int((p3L.py + p4L.py)/2),landmarks,0)
+        ratioTurn = distance_entre_points(Point(landmarks,31),Point(landmarks,2))/distance_entre_points(Point(landmarks,35),Point(landmarks,14))
+        #print(ratioTurn)
 
-        midHautR = Point.fromcoord(int((p1R.px + p2R.px)/2), int((p1R.py + p2R.py)/2),landmarks,0)
-        midBasR = Point.fromcoord(int((p3R.px + p4R.px)/2), int((p3R.py + p4R.py)/2),landmarks,0)
+        if ratioTurn < 0.5 and turnLeft == 0:
+            turnLeft = 1
+            timeTurn = time.time()
+            print("detect")
+            minTurn = 100
+        elif(turnLeft == 1):
+            if(minTurn > ratioTurn):
+                minTurn = ratioTurn
+            if ratioTurn > minTurn + 0.1 :
+                turnLeft = 0
+                print("LEEEFt")
+                pyautogui.hotkey('ctrl', 'tab')
+
+            if(time.time() - timeTurn) > 0.4:
+                print("annule : "+ str (ratioTurn))
+                turnLeft = -1
+
+       
+
+        
+        if ratioTurn > 2 and turnLeft == 0:
+            turnLeft = 2
+            timeTurn = time.time()
+            print("detect")
+            maxTurn = 0
+        elif(turnLeft == 2):
+            if(maxTurn < ratioTurn):
+                maxTurn = ratioTurn
+            if ratioTurn < maxTurn - 0.1 :
+                turnLeft = 0
+                print("RIGGHT")
+                pyautogui.hotkey('ctrl', 'shift', 'tab')
+
+            if(time.time() - timeTurn) > 0.4:
+                print("annule : "+ str (ratioTurn))
+                turnLeft = -1
+
+        if(turnLeft == -1):
+            if(ratioTurn > 0.8 and ratioTurn < 1.5):
+                turnLeft = 0
+                print("réinit: " + str(ratioTurn))
+
+       
 
 
         ratioL = distance_entre_points(PgaucheL,PdroiteL)/distance_entre_points(midHautL,midBasL)
@@ -111,8 +199,8 @@ while True:
 
     
 
-        if ratioL > 6:
-              cv2.putText(frame, "blink", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        if ((ratioL+ratioR)/2) > 6:
+              cv2.putText(frame, "blinkL", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
               if(doubleCloseL == 0):
                   time1L = time.time()
                   doubleCloseL = 1
@@ -121,8 +209,12 @@ while True:
                   difference = time.time()-time1L
                   print("double")
                   doubleCloseL = 3
-                  #subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
-                  pyautogui.press('volumedown')
+                  if(open == 0):
+                    subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
+                    open =1
+                  elif(open == 1):
+                      pyautogui.hotkey('ctrl', 't')
+                 
                  
         else:
             if(doubleCloseL == 1):
@@ -137,29 +229,17 @@ while True:
 
 
 
-        if ratioR > 6:
-                cv2.putText(frame, "blink", (300, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                if(doubleCloseR == 0):
-                    time1R = time.time()
-                    doubleCloseR = 1
+        window = win32gui.GetForegroundWindow()
 
-                elif(doubleCloseR == 2):
-                    difference = time.time()-time1R
-                    print("double")
-                    doubleCloseR = 3
-                    #subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
-                    pyautogui.press('volumeup')
-                    
-        else:
-            if(doubleCloseR == 1):
-                    doubleCloseR = 2
-            elif(doubleCloseR == 3):
-                    doubleCloseR = 0
-                    
-            if(doubleCloseR == 2 and (time.time() - time1R) > 0.5):
-                doubleCloseR = 0
-                print("simple R - ")
-                print(time.time() - time1R)
+# Récupérer le titre de la fenêtre
+        window_title = win32gui.GetWindowText(window)
+
+# Afficher le titre de la fenêtre dans la console
+        print(window_title)
+
+
+
+       
 
             
             

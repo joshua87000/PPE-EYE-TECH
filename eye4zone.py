@@ -106,34 +106,13 @@ while True:
 
     
 
-        region1 = treshold_eye[0 : int(height/2) ,0 : int(width/2)]
-        region4 = treshold_eye[int(height/2) : height ,int(width/2) :width]
-        region2 = treshold_eye[0 : int(height/2) ,int(width/2) :width]
-        region3 = treshold_eye[int(height/2) : height ,0 : int(width/2)]
-
+        region1 = treshold_eye[0 : height ,0 : int(width/2)]
+        region2 = treshold_eye[0 : height ,int(width/2) :width]
        
-        LeftTop = round((cv2.countNonZero(region1) / (region1.shape[0]*region1.shape[1]))*100,2)
-        RightTop = round((cv2.countNonZero(region2) / (region2.shape[0]*region2.shape[1]))*100,2)
-        LeftBottom = round((cv2.countNonZero(region3) / (region2.shape[0]*region3.shape[1]))*100,2)
-        RightBottom = round((cv2.countNonZero(region4) / (region2.shape[0]*region4.shape[1]))*100,2)
-
-
-        
-        
-        
+        LeftRegion = round((cv2.countNonZero(region1) / (region1.shape[0]*region1.shape[1]))*100,2)
+        RightRegion = round((cv2.countNonZero(region2) / (region2.shape[0]*region2.shape[1]))*100,2)
        
-
-
-        
-        
-
-
-        #coloreye = cv2.resize(coloreye, None , fx = 10, fy = 10)
-
-        
-
-
-      
+        #coloreye = cv2.resize(coloreye, None , fx = 10, fy = 10)      
       #  cv2.imshow("Eye2",coloreye)
 
         cv2.polylines(frame, [points], isClosed=False, color=(0, 0, 255), thickness=2)
@@ -160,13 +139,8 @@ while True:
         cv2.imshow("Eye",treshold_eye)
         cv2.imshow("Region 1 ",region1)
         cv2.imshow("Region 2",region2)
-        cv2.imshow("Region 3 ",region3)
-        cv2.imshow("Region 4",region4)
+      
         
-        
-        
-
-
     
     #calculer les fps
     fps += 1
@@ -181,7 +155,6 @@ while True:
    
 
     cv2.imshow("image",frame)
-   
    
 
     key = cv2.waitKey(1)

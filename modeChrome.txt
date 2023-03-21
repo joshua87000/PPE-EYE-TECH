@@ -1,0 +1,10 @@
+Raccourci Chrome
+
+- Nouvel Onglet : Crtl + T
+- Page Suivant/Precedant : Alt + fleche gauche/droite
+- Onglet Suivant : Crtl + Tab
+- Onglet Precedent : Crtl + Maj + Tab
+
+1 controle lent
+
+4 controles rapides
