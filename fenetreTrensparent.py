@@ -29,6 +29,7 @@ root.attributes("-topmost", True)
 
 LogoYoutube = PhotoImage(file=r"C:\Users\Joshua\Downloads\youtubeLogo.png")
 LogoChrome = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoChrome.png")
+LogoNetflix = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoNetflix.png")
 
 image = LogoChrome
 
@@ -93,19 +94,24 @@ def update_App():
    
     global LogoYoutube
     global LogoChrome
+    global LogoNetflix
 
     window = win32gui.GetForegroundWindow()
     window_title = win32gui.GetWindowText(window)
+   
     print(window_title)
-
-    if(recherche_chaine(window_title,"Youtube") == 1):
+    if(recherche_chaine("YouTube",window_title) == 1):
          label.configure(image=LogoYoutube)
+    elif recherche_chaine("Netflix",window_title) == 1:
+         label.configure(image=LogoNetflix)
+    else:
+        label.configure(image=LogoChrome)
 
    
    
     
     # Ajouter la fonction à la file d'attente des événements pour qu'elle soit exécutée toutes les 3 secondes
-    root.after(3000, update_App)
+    root.after(2000, update_App)
 
 # Appeler la fonction pour la première fois
 update_App()

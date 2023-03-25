@@ -5,6 +5,14 @@ Raccourci Chrome
 - Onglet Suivant : Crtl + Tab
 - Onglet Precedent : Crtl + Maj + Tab
 
+Raccourci Youtube
+
+- Lecture/Pause : k
+- Revenir en arrière de 10 secondes : j
+- Avancer de 10 secondes : l
+
+
+
 1 controle lent
 
 4 controles rapides
