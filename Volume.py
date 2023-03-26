@@ -1,8 +1,20 @@
-import pyautogui
+from tkinter import *
 
-for i in range(10):
-    pyautogui.press('volumeup')
+def add_image(event):
+    # Charger l'image depuis un fichier
+    img = PhotoImage(file=r"C:\Users\Joshua\Downloads\youtubeLogo.png")
 
-import subprocess
+    # Ajouter l'image à la fenêtre
+    label = Label(root, image=img)
+    label.pack()
 
-subprocess.Popen('"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"')
+# Créer la fenêtre principale
+root = Tk()
+
+# Attacher l'événement à la touche 'v'
+root.bind('<KeyPress-v>', add_image)
+
+# Afficher la fenêtre
+root.mainloop()
+
+
