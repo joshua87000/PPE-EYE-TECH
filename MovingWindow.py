@@ -60,7 +60,7 @@ def Gemini(event):
 
     
 
-def my_function():
+def ouverture():
     print("teer")
     positionFinal = (200,100)
     posistionActuel = ((int)(largeur_ecran/2 -200) ,  (int)(hauteur_ecran/2 -100))
@@ -155,17 +155,13 @@ def leave(event):
             time.sleep(duration / frames / 1000)
 
 
-root.after(3000, my_function)
+root.after(3000, ouverture)
 
 
 root.bind('<Escape>', lambda event: root.quit())
-root.bind('f', my_function)
 root.bind('k', Gemini)
 root.bind("<B1-Motion>", deplacer_fenetre)
 root.bind('t',Agrandir)
-
-
-
 
 
 # Afficher la fenêtre

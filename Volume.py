@@ -1,20 +1,33 @@
-from tkinter import *
+import cv2
 
-def add_image(event):
-    # Charger l'image depuis un fichier
-    img = PhotoImage(file=r"C:\Users\Joshua\Downloads\youtubeLogo.png")
+# Ouvrir la webcam (index 0 pour la webcam par défaut)
+cap = cv2.VideoCapture(1)
 
-    # Ajouter l'image à la fenêtre
-    label = Label(root, image=img)
-    label.pack()
+# Nommer la fenêtre d'affichage
+cv2.namedWindow("Webcam", cv2.WINDOW_NORMAL)
 
-# Créer la fenêtre principale
-root = Tk()
+# Boucle infinie pour lire les images de la webcam
+while True:
+    # Lire une image de la webcam
+    ret, frame = cap.read()
 
-# Attacher l'événement à la touche 'v'
-root.bind('<KeyPress-v>', add_image)
+    # Afficher l'image dans la fenêtre nommée
+    cv2.imshow("Webcam", frame)
 
-# Afficher la fenêtre
-root.mainloop()
+    # Définir la propriété de la fenêtre pour permettre la modification de la taille
+    cv2.setWindowProperty("Webcam", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+
+    # Déplacer la fenêtre en dehors de l'écran
+    cv2.moveWindow("Webcam", -10000, -10000)
+
+    # Attendre 1 milliseconde pour permettre l'affichage de l'image
+    # Appuyer sur la touche 'q' pour quitter la boucle
+    if cv2.waitKey(1) == ord('q'):
+        break
+
+# Libérer la ressource de la webcam et fermer les fenêtres d'affichage
+cap.release()
+cv2.destroyAllWindows()
+
 
 

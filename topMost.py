@@ -10,6 +10,14 @@ import dlib
 import time
 import pyautogui
 import subprocess
+import screeninfo
+
+ecran = screeninfo.get_monitors()[0]
+largeur_ecran, hauteur_ecran = ecran.width, ecran.height
+
+
+
+
 
 
 def recherche_chaine(chaine1, chaine2):
@@ -43,6 +51,9 @@ def openCV_window():
 
     cmp = 0
     mode = 0
+
+    copie = 0
+    cmpGros =0
 
     while True:
         _, frame = cap.read()
@@ -114,13 +125,26 @@ def openCV_window():
             grosYeuxD = dC.distance_entre_points(dC.Point(landmarks,46),dC.Point(landmarks,24))/dC.distance_entre_points(dC.Point(landmarks,23),dC.Point(landmarks,24))
             grosYeux = (grosYeuxD + grosYeuxL)/2
 
-            print(grosYeux)
+            # print(grosYeux)
 
-            if(grosYeux > 2.8):
+
+
+            if(grosYeux > 2.8 ):
+                gros = 1
+                cmpGros = 0
                 if(mode == 0):
                     print("Big eye")
+                    #pyautogui.hotkey('alt', 'tab')
+                    if(copie == 0):
+                        pyautogui.hotkey('ctrl', 'c')
+                        copie = 1
+                    else :
+                        pyautogui.press('enter')
+                        pyautogui.hotkey('ctrl', 'v')
+                        copie = 0
                 elif(mode == 1):
                     pyautogui.press('k')
+           
 
             ratioTurn = dC.distance_entre_points(dC.Point(landmarks,31),dC.Point(landmarks,2))/dC.distance_entre_points(dC.Point(landmarks,35),dC.Point(landmarks,14))
             #print(ratioTurn)
@@ -162,10 +186,15 @@ def openCV_window():
                         pyautogui.hotkey('ctrl', 'shift', 'tab')
                     elif (mode == 1):
                         pyautogui.press('j')
+                    elif (mode == 3):
+                        pyautogui.hotkey('ctrl', 'home')
+                        
+
 
                 if(time.time() - timeTurn) > 0.4:
                     print("annule : "+ str (ratioTurn))
                     turnLeft = -1
+                    
 
             if(turnLeft == -1):
                 if(ratioTurn > 0.8 and ratioTurn < 1.5):
@@ -193,7 +222,13 @@ def openCV_window():
                     doubleCloseL = 3
 
                     if(mode == 0):
-                        pyautogui.hotkey('ctrl', 't')
+                        pyautogui.hotkey('ctrl', 'v')
+                        
+
+                       
+                       
+                        
+
                     
 
                     
@@ -215,7 +250,10 @@ def openCV_window():
                 
 
 
-        cv2.imshow("image",frame)
+        cv2.imshow("Webcam",frame)
+        # cv2.setWindowProperty("Webcam", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
+        # cv2.moveWindow("Webcam", -10000, -10000)
+
         key = cv2.waitKey(1)
 
 
@@ -235,6 +273,8 @@ def openCV_window():
                 mode = 1
             elif recherche_chaine("Netflix", window_title) == 1:
                 mode = 2
+            elif recherche_chaine("Visual", window_title) == 1:
+                mode = 3
             else:
                 mode = 0
                 
@@ -251,26 +291,83 @@ def openCV_window():
 # fonction pour créer la fenêtre Tkinter
 
 def tkinter_window():
+
+    class FadeLabel(Label):
+        def __init__(self, master, text, **kwargs):
+            super().__init__(master, text=text, **kwargs)
+            self.opacity = 0.0
+            self.fade_in()
+
+        def fade_in(self):
+            self.opacity += 0.05
+            if self.opacity > 1.0:
+                return
+            alpha = int((1 - self.opacity) * 255)
+            self.config(foreground=f"#{alpha:02x}{alpha:02x}{alpha:02x}")
+            self.after(50, self.fade_in)
+
+    def ouverture():
+        print("teer")
+        positionFinal = (200,100)
+        posistionActuel = ((int)(largeur_ecran/2 -200) ,  (int)(hauteur_ecran/2 -100))
+
+        tailleFinal = (100,100)
+        tailleActuel = (400,200)
+
+        nmbStep = 10
+        stepPostion = ((posistionActuel[0] - positionFinal[0])/nmbStep, (posistionActuel[1] - positionFinal[1])/nmbStep)
+        stepTaille = ((tailleActuel[0] - tailleFinal[0])/nmbStep, (tailleActuel[1] - tailleFinal[1])/nmbStep)
+        for i in range(nmbStep):
+
+            posistionActuel = (posistionActuel[0] - stepPostion[0], posistionActuel[1] - stepPostion[1])
+            tailleActuel = (tailleActuel[0] - stepTaille[0], tailleActuel[1] - stepTaille[1])
+
+            root.geometry("{2}x{3}+{0}+{1}".format((int)(posistionActuel[0]), (int)(posistionActuel[1]),(int)(tailleActuel[0]), (int)(tailleActuel[1])))
+            
+            root.update_idletasks()
+            time.sleep(0.01)
+
+        LogoEye = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoEye.png")
+        
+        label.config(image=LogoEye)
+        label.image = LogoEye  
+        root.bind('<Enter>', enter)
+        root.bind('<Leave>', leave)
+        update_App()
+
+    predX = -50
+    predY = -50
+    def deplacer_fenetre(event):
+        global predX
+        global predY
+        if(predX != -50):
+            root.geometry("+{0}+{1}".format(predX-50, predY-50))
+            predX = event.x_root
+            predY = event.y_root
+        else:
+            predX = event.x_root
+            predY = event.y_root
+
+
     root = Tk()
     root.title("Ma fenêtre")
 
-    width = 300
-    height = 130
-    root.geometry("%dx%d" % (width, height))
-    root.attributes('-alpha', 0.5)
-
+    root.geometry("400x200+{0}+{1}".format((int)(largeur_ecran/2 -200) , (int)(hauteur_ecran/2 -100)))
+    root.overrideredirect(True)
     root.attributes("-topmost", True)
+
+
+
+    label = FadeLabel(root, "Gemini", font=("Helvetica", 55))
+    label.pack(expand=True, fill=BOTH)
 
     LogoYoutube = PhotoImage(file=r"C:\Users\Joshua\Downloads\youtubeLogo.png")
     LogoChrome = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoChrome.png")
     LogoNetflix = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoNetflix.png")
+    LogoVisual = PhotoImage(file=r"C:\Users\Joshua\Downloads\logoVisual.png")
     
-    image = LogoChrome
-    label = Label(root, image=image)
-    label.pack()
 
-    root.update()  # mise à jour de la fenêtre
-
+   
     duration = 250
 
     def enter(event):
@@ -305,15 +402,19 @@ def tkinter_window():
 
     
     def update_App():
-        nonlocal image
+       
         window = win32gui.GetForegroundWindow()
         window_title = win32gui.GetWindowText(window)
+
+        print(window_title)
     
         
         if recherche_chaine("YouTube", window_title) == 1:
             image = LogoYoutube
         elif recherche_chaine("Netflix", window_title) == 1:
             image = LogoNetflix
+        elif recherche_chaine("Visual", window_title) == 1:
+            image = LogoVisual
         else:
             image = LogoChrome
     
@@ -322,10 +423,10 @@ def tkinter_window():
     
         root.after(2000, update_App)
     
-    update_App()
+    
 
-    root.bind('<Enter>', enter)
-    root.bind('<Leave>', leave)
+    root.after(3000, ouverture)
+    root.bind('<Escape>', lambda event: root.quit())
 
     root.mainloop()
 
@@ -339,3 +440,6 @@ openCV_thread.start()
 # créer un thread pour la fenêtre Tkinter
 tkinter_thread = threading.Thread(target=tkinter_window)
 tkinter_thread.start()
+
+
+
