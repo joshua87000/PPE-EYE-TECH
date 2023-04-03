@@ -206,7 +206,7 @@ def openCV_window():
 
             ratioL = dC.distance_entre_points(PgaucheL,PdroiteL)/dC.distance_entre_points(midHautL,midBasL)
             ratioR = dC.distance_entre_points(PgaucheR,PdroiteR)/dC.distance_entre_points(midHautR,midBasR)
-
+                
 
         
 
@@ -220,9 +220,10 @@ def openCV_window():
                     difference = time.time()-time1L
                     print("double")
                     doubleCloseL = 3
+                    pyautogui.hotkey('ctrl', 't')
 
-                    if(mode == 0):
-                        pyautogui.hotkey('ctrl', 'v')
+                    
+                        
                         
 
                        
