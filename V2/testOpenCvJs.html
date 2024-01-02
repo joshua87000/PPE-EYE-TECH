@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Tracking with TensorFlow.js</title>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+</head>
+<body>
+    <h1>Hand Tracking with TensorFlow.js</h1>
+    <video id="videoInput" width="640" height="480" autoplay></video>
+    <canvas id="outputCanvas" width="640" height="480"></canvas>
+
+    <script type="text/javascript">
+console.log("Backend actuel :", tf.getBackend());
+        tf.setBackend('webgl');
+        console.log("Backend actuel :", tf.getBackend());
+     
+
+        async function runHandpose() {
+            // Charger le modèle Handpose
+            const model = await handpose.load();
+            console.log("oui");
+
+            // Accéder à la webcam
+            const videoElement = document.getElementById('videoInput');
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    videoElement.srcObject = stream;
+                    console.log("stream");
+
+                    // Attendre que la vidéo soit chargée
+                    videoElement.onloadedmetadata = async function () {
+                        // Initialiser le canvas pour afficher le flux vidéo
+                        const outputCanvas = document.getElementById('outputCanvas');
+                        const context = outputCanvas.getContext('2d');
+
+                        // Détecter les mains dans le flux vidéo
+                        console.log("video charge");
+
+                        async function detectHands() {  
+                         
+                            const hands = await model.estimateHands(videoElement);
+                          
+
+                            // Effacer le canvas
+                            context.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+
+                            // Afficher le flux vidéo
+                            context.drawImage(videoElement, 0, 0, outputCanvas.width, outputCanvas.height);
+
+                            // Afficher les repères des mains
+                            if (hands.length > 0) {
+                                hands.forEach(hand => {
+                                     
+                                    // Afficher les landmarks (repères) de la main
+                                    hand.landmarks.forEach(point => {
+                                        const [x, y] = point;
+                                        context.beginPath();
+                                        context.arc(x, y, 5, 0, 2 * Math.PI);
+                                        context.fillStyle = '#65b1cd';
+                                        context.fill();
+                                    });
+                                });
+                            }
+
+                            // Continuer la détection en boucle
+                            requestAnimationFrame(detectHands);
+                        }
+
+                        // Démarrer la détection des mains
+                        detectHands();
+                    };
+                })
+                .catch((err) => {
+                    console.error('Erreur lors de l\'accès à la webcam : ', err);
+                });
+        }
+
+        // Exécuter la fonction lorsque TensorFlow.js est prêt
+        tf.ready().then(() => {
+            console.log(" tf ready");
+            runHandpose();
+        });
+
+        
+    </script>
+</body>
+</html>
