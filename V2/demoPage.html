@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Handy</title>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+
+
+</head>
+
+
+<style>
+
+@font-face {
+            font-family: "Futura";
+            src: "font/futura/futur.ttf" format("truetype");
+        }
+
+    body {
+       font-family: "Futura", sans-serif;
+    }
+  header
+  {
+    display: flex ;
+    align-items: center;
+    justify-content: space-between
+  }
+
+  #try-demo
+  {
+    background-color: #F18D17 ;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 5px 10px 5px 10px;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header a
+  {
+    text-decoration: none;
+    color: black;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header p
+  {
+    margin: 10px;
+  }
+  header img
+  {
+        width: 150px;
+        height: auto;
+  }
+
+  #main-content
+  {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  #draw-box
+  {
+    border-radius: 10px;
+    border: solid;
+    width: 50%;
+    height: 350px;
+    margin-top: 80px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loader {
+    /* position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%); */
+
+
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 
+
+    #loading-box
+    {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    align-items: center;
+
+    }
+
+    video
+    {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%); 
+        display: none;
+        /* border: solid; */
+        border-radius: 10px;
+        width:320px;
+        height:240px;
+        transition: all 1s ease;
+        z-index: 1;
+       
+
+    }
+
+    video.small {
+            top: 0%;
+            left: 100%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 120px;
+        }
+
+        #say-hello
+        {
+            z-index: 10;
+            color: #FFF;
+            transition: all 0.5s ease;
+        }
+
+        #emoji.annim
+        {
+            display: inline-block;
+            animation: rotateAnimation 2s infinite;
+        }
+
+      
+  
+
+  @keyframes rotateAnimation {
+            0% {
+                transform: rotate(0deg); /* Rotation initiale */
+            }
+            50% {
+                transform: rotate(45deg); /* Rotation à mi-chemin */
+            }
+            100% {
+                transform: rotate(0deg); /* Rotation finale, revenant à 0 degré */
+            }
+        }
+
+
+</style>
+<body>
+    <header> 
+        <img src ="Image/Capture-removebg-preview.png">
+        <div>
+            <a href="https://www.example.com">About us</a>
+            <a href="https://www.example.com">Contact</a>
+            <a id = "try-demo" href="HandyLandingPage.html">Join th beta</a>
+        </div>
+    </header>
+
+    <div id ="main-content">
+        <h2>Utilisez vos doigts pour dessiner quelque chose a l'écran</h2>
+        <div id ="draw-box">
+            <div id ="loading-box">
+                <span class="loader"></span>
+                <p>Chargement de la caméra</p>
+            </div>
+            <video id="videoInput"  autoplay></video>
+        </div>
+
+        
+
+        
+
+    </div>
+
+    <script type="text/javascript">
+
+        tf.setBackend('webgl');
+        console.log("Backend actuel :", tf.getBackend());
+     
+
+        async function runHandpose() {
+            // Charger le modèle Handpose
+            const model = await handpose.load();
+           
+
+            // Accéder à la webcam
+            const videoElement = document.getElementById('videoInput');
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    videoElement.srcObject = stream;
+                    console.log("stream");
+
+                    // Attendre que la vidéo soit chargée
+                    videoElement.onloadedmetadata = async function () {
+                        // Initialiser le canvas pour afficher le flux vidéo
+                        
+                        // Détecter les mains dans le flux vidéo
+                        console.log("video charge");
+
+                        var LoadingBox = document.getElementById("loading-box");
+                        LoadingBox.remove();
+
+                        var VideoBox = document.getElementById("videoInput");
+                        VideoBox.style.display = "block";
+
+                        var drawBox = document.getElementById("draw-box");
+                        var newParagraph = document.createElement("p");
+                        newParagraph.innerHTML = "Say hello to handy <span id = 'emoji'>👋<span>";
+                        newParagraph.id ="say-hello"; 
+                        drawBox.appendChild(newParagraph);
+
+                        var hello = 0;
+                    
+
+                        async function detectHands() {  
+                         
+                            const hands = await model.estimateHands(videoElement);
+                          
+
+                           
+
+                            // Afficher les repères des mains
+                            if (hands.length > 0) {
+                                hands.forEach(hand => {
+                                    if(hello == 0)
+                                    {
+                                        hello = 1;
+                                        VideoBox.classList.add("small");
+
+                                        var SayHello = document.getElementById("say-hello");
+                                        SayHello.style.color ="black";
+
+                                        document.getElementById("emoji").classList.add("annim");
+                                    }
+                                });
+                            }
+
+                            // Continuer la détection en boucle
+                            requestAnimationFrame(detectHands);
+                        }
+
+                        // Démarrer la détection des mains
+                        detectHands();
+                    };
+                })
+                .catch((err) => {
+                    console.error('Erreur lors de l\'accès à la webcam : ', err);
+                });
+        }
+
+        // Exécuter la fonction lorsque TensorFlow.js est prêt
+        tf.ready().then(() => {
+            console.log(" tf ready");
+            runHandpose();
+        });
+
+        
+    </script>
+
+</body>
+</html>

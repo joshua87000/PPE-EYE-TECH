@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handy 👋</title>
+
+</head>
+
+<style>
+
+@font-face {
+            font-family: "Futura";
+            src: "font/futura/futur.ttf" format("truetype");
+        }
+
+    body {
+       font-family: "Futura", sans-serif;
+    }
+  header
+  {
+    display: flex ;
+    align-items: center;
+    justify-content: space-between
+  }
+
+  #try-demo
+  {
+    background-color: #F18D17 ;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 5px 10px 5px 10px;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header a
+  {
+    text-decoration: none;
+    color: black;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header p
+  {
+    margin: 10px;
+  }
+
+  #meet-handy
+  {
+    width: 50%;
+    min-width: 500px;
+    margin-left: 100px;
+    margin-top: 100px;
+  }
+
+  #meet-handy p
+  {
+    font-size: 2.7em;
+    margin: 0;
+    margin-top: 15px;
+  }
+
+  #Handy
+  {
+    font-size: 1.5em;
+    color: #F18D17;
+   
+  }
+
+  #emoji
+  {
+    font-size: 1.5em;
+   
+    display: inline-block; /* Assurez-vous que l'élément est en mode bloc pour appliquer la rotation correctement */
+    animation: rotateAnimation 2s infinite;
+  }
+
+  @keyframes rotateAnimation {
+            0% {
+                transform: rotate(0deg); /* Rotation initiale */
+            }
+            50% {
+                transform: rotate(45deg); /* Rotation à mi-chemin */
+            }
+            100% {
+                transform: rotate(0deg); /* Rotation finale, revenant à 0 degré */
+            }
+        }
+
+  #email-Box
+  {
+    border: solid;
+    border-radius: 10px;
+    display: flex;
+    margin-left: 100px;
+    width: 40%;
+    min-width: 400px;
+    max-width: 500px;
+    justify-content: space-between;
+    margin-top: 60px;
+padding: 3px 3px 3px 3px;
+  }
+
+  #email-Box input
+  {
+    border: none;
+    width: 70%;
+    font-family: "Futura", sans-serif;
+    font-size: 1.3em;
+  }
+
+  #email-Box input:focus {
+    outline: none;
+}
+
+  #email-Box button
+  {
+    border: none;
+    width: 25%;
+    color: white;
+    background-color: #F18D17;
+    border-radius: 7px;
+    font-family: "Futura", sans-serif;
+    font-size: 1.2em;
+    cursor: pointer;
+
+  }
+
+  #email-Box button:hover
+  {
+
+    background-color: #cd7613;
+
+  }
+
+  header img
+  {
+        width: 150px;
+        height: auto;
+  }
+
+
+</style>
+
+<body>
+    <header> 
+        <img src ="Image/Capture-removebg-preview.png">
+        <div>
+            <a href="https://www.example.com">About us</a>
+            <a href="https://www.example.com">Contact</a>
+            <a id = "try-demo" href="demoPage.html">Try the demo</a>
+        </div>
+    </header>
+
+    <div id ="meet-handy">
+        <p>Meet <span id ="Handy">Handy </span><span id ="emoji">👋</span></p>
+        <p>The first ai assistant to controlled your pc with your hands</p>
+    </div>
+
+    <div id ="email-Box">
+        <input type="text" name="Email" placeholder="Enter your email address" autocomplete="off">
+        <button>Join the beta</button>
+    </div>
+</body>
+</html>
