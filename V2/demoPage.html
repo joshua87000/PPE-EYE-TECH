@@ -181,6 +181,15 @@
            
         }
 
+        #myCanvas
+        {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+
+        }
+
 
 </style>
 <body>
@@ -202,6 +211,7 @@
             </div>
             <video id="videoInput"  autoplay></video>
             <img id ="handOn" src = "Image/handIcone.png" >
+            <canvas id="myCanvas"></canvas>
         </div>
 
         
@@ -214,6 +224,8 @@
 
         tf.setBackend('webgl');
         console.log("Backend actuel :", tf.getBackend());
+
+        var drawBox = document.getElementById("draw-box");
      
 
         async function runHandpose() {
@@ -229,7 +241,7 @@
                     const webcams = devices.filter(device => device.kind === 'videoinput');
                     console.log(webcams);
 
-                    if (webcams.length > 0) {
+                    if (webcams.length > 1) {
                         
                         const webcamToUse = webcams[0];
 
@@ -246,7 +258,7 @@
                     } else {
                        
                         console.log('Aucune webcam trouvée, utilise la caméra par défaut.');
-                        //return navigator.mediaDevices.getUserMedia({ video: true });
+                        return navigator.mediaDevices.getUserMedia({ video: true });
                     }
                 })
                 .then((stream) => {
@@ -267,7 +279,7 @@
                         var VideoBox = document.getElementById("videoInput");
                         VideoBox.style.display = "block";
 
-                        var drawBox = document.getElementById("draw-box");
+                      
                         var newParagraph = document.createElement("p");
                         newParagraph.innerHTML = "Say hello to handy <span id = 'emoji'>👋<span>";
                         newParagraph.id ="say-hello"; 
@@ -350,9 +362,17 @@
                                     {
                                         document.getElementById("handOn").src = "Image/handIcone.png";
                                         handpos = 0;
+                                        lastX = 0;
+                                        lastY = 0;
                                     }
 
                                     afficheHand(moyenneY,moyenneX);
+                                    if(handpos == 1)
+                                    {
+                                        let dx = canvas.width*moyenneX/100;
+                                        let dy = canvas.height*moyenneY/100;
+                                        dessiner(dx , dy);
+                                    }
 
 
                                 });
@@ -397,6 +417,63 @@
             let distance = Math.sqrt(carreDifferenceX + carreDifferenceY);
 
             return distance;
+        }
+
+        const canvas = document.getElementById('myCanvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = drawBox.offsetWidth;
+        canvas.height = drawBox.offsetHeight;
+
+        let dessinEnCours = false;
+
+        // Gestionnaire d'événement pour le clic de souris
+        canvas.addEventListener('mousedown', (e) => {
+            dessinEnCours = true;
+            dessiner(e.clientX - drawBox.offsetLeft, e.clientY - drawBox.offsetTop);
+            console.log("x:" , e.clientX - drawBox.offsetLeft);
+            console.log("y:" ,e.clientY - drawBox.offsetTop);
+        });
+
+        // Gestionnaire d'événement pour le déplacement de souris
+        canvas.addEventListener('mousemove', (e) => {
+            if (dessinEnCours) {
+                dessiner(e.clientX - drawBox.offsetLeft, e.clientY - drawBox.offsetTop);
+
+            }
+        });
+
+        // Gestionnaire d'événement pour le relâchement de souris
+        canvas.addEventListener('mouseup', () => {
+            dessinEnCours = false;
+            context.beginPath(); // Commencer un nouveau chemin après le relâchement de la souris
+        });
+
+        // Fonction pour dessiner sur le canvas
+        var lastX =0;
+        var lastY = 0;
+        function dessiner(x, y) {
+            // Commencer un nouveau chemin si ce n'est pas un mouvement continu
+            if (!dessinEnCours) {
+                context.beginPath();
+            }
+
+            // Définir les propriétés du stylo
+            context.lineWidth = 5;
+            context.lineCap = 'round';
+            context.strokeStyle = '#000'; // Couleur du stylo (noir)
+
+            // Dessiner une ligne vers la position actuelle de la souris
+            if(lastX !=0)
+            {
+                context.moveTo(lastX, lastY);
+            }
+           
+                context.lineTo(x, y);
+                context.stroke();
+                lastX = x;
+                lastY = y;
+           
         }
 
 
