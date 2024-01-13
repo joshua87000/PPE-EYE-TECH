@@ -11,7 +11,12 @@
 
 @font-face {
             font-family: "Futura";
-            src: "font/futura/futur.ttf" format("truetype");
+            src: url("font/futura/futur.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Gloria";
+            src: url("font/Gloria_Hallelujah/GloriaHallelujah-Regular.ttf") format("truetype");
         }
 
     body {
@@ -54,6 +59,8 @@
     min-width: 500px;
     margin-left: 100px;
     margin-top: 100px;
+    position: relative;
+z-index: 10;
   }
 
   #meet-handy p
@@ -102,6 +109,8 @@
     justify-content: space-between;
     margin-top: 60px;
 padding: 3px 3px 3px 3px;
+position: relative;
+z-index: 10;
   }
 
   #email-Box input
@@ -110,10 +119,15 @@ padding: 3px 3px 3px 3px;
     width: 70%;
     font-family: "Futura", sans-serif;
     font-size: 1.3em;
+    background-color: #cd761300;
   }
 
   #email-Box input:focus {
     outline: none;
+}
+
+#email-Box input::placeholder {
+    color: #808080; /* Remplacez par la couleur souhaitée */
 }
 
   #email-Box button
@@ -142,10 +156,61 @@ padding: 3px 3px 3px 3px;
         height: auto;
   }
 
+  #imgBack
+  {
+    position: absolute;
+    top: 0;
+    left:0;
+    height: 100vh;
+    width: auto;
+    filter: blur(89px);
+  }
+
+  #flatDesign
+  {
+    height: 50vh;
+    width: auto;
+
+  }
+
+  #flatDesignBox
+  {
+    position: absolute;
+    bottom: 10%;
+    right:10px;
+    font-family: "Gloria", sans-serif;
+  }
+
+  @media (max-width: 1100px) {
+    #flatDesignBox {
+        display: none;
+    }
+    #fleche
+    {
+      display: none;
+    }
+}
+
+#flatDesignBox p
+{
+    margin-left: 40%;
+    margin-bottom: -20px;
+}
+
+#fleche
+{
+    position: absolute;
+    top: 70px;
+    right:53px;
+    width: 75px;
+    height: auto;
+}
+
 
 </style>
 
 <body>
+    
     <header> 
         <img src ="Image/Capture-removebg-preview.png">
         <div>
@@ -163,6 +228,12 @@ padding: 3px 3px 3px 3px;
     <div id ="email-Box">
         <input type="text" name="Email" placeholder="Enter your email address" autocomplete="off">
         <button>Join the beta</button>
+    </div>
+    <img id ="imgBack" src ="Image/backBlob2.png">
+    <img id ="fleche" src ="Image/fleche.png">
+    <div id ="flatDesignBox" >
+      <p>Create a work of art <br> without even using your mouse</p>
+      <img id ="flatDesign" src = "Image/flatImg.png">
     </div>
 </body>
 </html>

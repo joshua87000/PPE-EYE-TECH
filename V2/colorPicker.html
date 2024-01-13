@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color picker</title>
+</head>
+<style>
+
+    .colorBox
+    {
+        padding :10px;
+        border-radius: 7px;
+    }
+
+    .colorBox:hover
+    {
+        background-color: rgb(207, 207, 207);
+    }
+
+
+    .colorSelected
+    {
+        width: 50px;
+        height: 50px;
+        border: 7px solid;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .inColor
+    {
+        width: 85%;
+        height: 85%;
+        border-radius: 50px;
+    }
+
+    #color-picker
+    {
+        display: flex;
+
+    }
+
+
+</style>
+<body>
+
+    <div id = color-picker >
+        <div class ="colorBox" onclick="selectColor(this)">
+            <div class = "colorSelected" style="border-color: black;">
+                <div class = "inColor" style="background-color: black;"></div>
+            </div>
+        </div>
+        <div class ="colorBox" onclick="selectColor(this)">
+            <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                <div class = "inColor" style="background-color: red;"></div>
+            </div>
+        </div>
+        <div class ="colorBox" onclick="selectColor(this)">
+            <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                <div class = "inColor" style="background-color: blue;"></div>
+            </div>
+        </div>
+        <div class ="colorBox" onclick="selectColor(this)">
+            <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                <div class = "inColor" style="background-color: green;"></div>
+            </div>
+        </div> 
+    </div>
+
+    <script>
+        function selectColor(element)
+        {
+            var allBorder = document.querySelectorAll('.colorSelected');
+            allBorder.forEach(function(item) {
+                item.style.borderColor = 'rgba(255, 0, 0, 0)';
+            });
+
+             var border = element.querySelector('.colorSelected');
+             var color = element.querySelector('.inColor');
+             border.style.borderColor = color.style.backgroundColor;
+        }
+
+
+    </script>
+    
+</body>
+
+</html>

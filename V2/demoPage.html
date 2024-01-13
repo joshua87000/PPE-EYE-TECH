@@ -24,6 +24,7 @@
 
     body {
        font-family: "Futura", sans-serif;
+       position: relative;
     }
   header
   {
@@ -82,6 +83,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
   }
 
   .loader {
@@ -172,12 +174,16 @@
             }
         }
 
-        #draw-box img{
+        #handOn{
             position: absolute;
             top: 10px;
             left: 10px;
-            width: 50px;
+            width: 25px;
             height: auto;
+            transform: translate(-50%,-50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 12;
            
         }
 
@@ -189,6 +195,76 @@
             z-index: 1;
 
         }
+
+        #tutoTxt
+        {
+            display: none;
+            z-index: 30;
+            color: #FFF;
+            transition: all 1s ease;
+            text-align: center;
+            font-size: 1.4em;
+        }
+
+        .colorBox
+    {
+        padding :5px;
+        border-radius: 7px;
+
+    }
+
+    .colorBox:hover
+    {
+        background-color: rgb(207, 207, 207);
+    }
+
+
+    .colorSelected
+    {
+        width: 30px;
+        height: 30px;
+        border: 2px solid;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .inColor
+    {
+        width: 85%;
+        height: 85%;
+        border-radius: 50px;
+    }
+
+    #color-picker
+    {
+        display: flex;
+        position: absolute;
+        top: 0px;
+        left :20px;
+        z-index: 10;
+
+        
+
+
+    }
+
+    #binBox
+    {
+        position: absolute;
+        left:10px;
+        bottom: 0px;
+        padding: 5px;
+        border-radius: 7px;
+        z-index: 10;
+    }
+
+    #binBox img
+    {
+        width: 30px;
+        height: auto;
+    }
 
 
 </style>
@@ -212,6 +288,32 @@
             <video id="videoInput"  autoplay></video>
             <img id ="handOn" src = "Image/handIcone.png" >
             <canvas id="myCanvas"></canvas>
+            <p id = "tutoTxt"></p>
+            <div id = "binBox">
+                <img src ="Image/bin.png">
+            </div>
+            <div id = color-picker >
+                <div class ="colorBox" onclick="selectColor(this)">
+                    <div class = "colorSelected" style="border-color: black;">
+                        <div class = "inColor" style="background-color: black;"></div>
+                    </div>
+                </div>
+                <div class ="colorBox" onclick="selectColor(this)">
+                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                        <div class = "inColor" style="background-color: red;"></div>
+                    </div>
+                </div>
+                <div class ="colorBox" onclick="selectColor(this)">
+                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                        <div class = "inColor" style="background-color: blue;"></div>
+                    </div>
+                </div>
+                <div class ="colorBox" onclick="selectColor(this)">
+                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                        <div class = "inColor" style="background-color: green;"></div>
+                    </div>
+                </div> 
+            </div>
         </div>
 
         
@@ -226,6 +328,9 @@
         console.log("Backend actuel :", tf.getBackend());
 
         var drawBox = document.getElementById("draw-box");
+        var tutoTxt = document.getElementById("tutoTxt");
+        var tutoStep = 0;
+        var drawColor = "rgb(0,0,0)";
      
 
         async function runHandpose() {
@@ -280,15 +385,18 @@
                         VideoBox.style.display = "block";
 
                       
-                        var newParagraph = document.createElement("p");
-                        newParagraph.innerHTML = "Say hello to handy <span id = 'emoji'>👋<span>";
-                        newParagraph.id ="say-hello"; 
-                        newParagraph.class = "annim";
-                        drawBox.appendChild(newParagraph);
+                       
+                        tutoTxt.innerHTML = "Say hello to handy <span id = 'emoji' class = 'annim'>👋<span>";
+                        tutoTxt.style.display = "block";
+                       
+                       
+                
 
                         var hello = 0;
                         var handOn = 0;
                         var handpos = 0;
+                        var cmpFrameWhitoutHand = 0;
+                        var cmpTuto = 0;
                     
 
                         async function detectHands() {  
@@ -299,66 +407,111 @@
                            
 
                             // Afficher les repères des mains
-                            if(hands.length == 0 || handOn == 1)
+                            if(hands.length == 0 && handOn == 1)
                             {
-                                //document.getElementById("handOn").style.display = "none";
-                                handOn = 0;
+                                cmpFrameWhitoutHand ++;
+                                if(cmpFrameWhitoutHand == 8)
+                                {
+                                    document.getElementById("handOn").style.opacity = "0";
+                                    handOn = 0;
+                                    console.log("not hand");
+                                }
+                                
                             }
 
-                            if (hands.length > 0) {
-                                hands.forEach(hand => {
-                                    if(hello == 0)
-                                    {
-                                        hello = 1;
-                                        VideoBox.classList.add("small");
+                            if(tutoStep == 1 && hands.length > 0)
+                            {
+                                cmpTuto++;
+                                if(cmpTuto > 80)
+                                {
+                                    setTimeout(() => {
+                                        newTutotxt("Do this sign to draw 👌");
+                                        tutoStep = 2;
+                                        cmpTuto=0;
+                                        }, 2000);
+                                   
+                                }
+                            }
 
-                                        var SayHello = document.getElementById("say-hello");
-                                        SayHello.style.color ="black";
-
-                                        // Utilisation de setTimeout avec une fonction fléchée
-                                        setTimeout(() => {
-                                            document.getElementById("say-hello").style.display = "none";
+                            if(tutoStep == 2 && cmpTuto > 60)
+                            {
+                                setTimeout(() => {
+                                        newTutotxt("Nice !");
+                                        tutoStep = 3;
+                                        cmpTuto=0;
                                         }, 1000);
+                            }
 
+                            
+
+                            
+
+                            if (hands.length > 0) {
+                               if(hands[0].landmarks[20][0] < hands[0].landmarks[4][0] )
+                               {
+                                    imageHand.style.transform = "scaleX(-1)";
+                               }
+                               else
+                               {
+                                    imageHand.style.transform = "scaleX(1)";
+                               }
+
+                               
+
+
+                                hands.forEach(hand => {
+                                    if(tutoStep == 0)
+                                    {
+                                        tutoStep = 1;
+                                        VideoBox.classList.add("small");
+                                        
+                                        tutoTxt.style.color ="#F18D17";
+                                        setTimeout(() => {
+                                            newTutotxt("let's start !<br>Raise your hand and move it to face the screen ✋");
+
+                                        }, 1000);
                                     }
-                                    if(handOn == 0)
+                                    if(handOn == 0 && tutoStep > 0)
                                     {
                                         handOn = 1;
-                                       // document.getElementById("handOn").style.display = "block";
+                                        document.getElementById("handOn").style.opacity = "1";
+                                        cmpFrameWhitoutHand = 0;
                                     }
                                     var moyenneX = 0;
                                     var moyenneY = 0;
 
+
+
                                  
 
-                                    for(let i = 0 ; i < 20 ; i++)
-                                    {
-                                        moyenneX += hands[0].landmarks[i][0];
-                                        moyenneY += hands[0].landmarks[i][1];
-                                    }
-
-                                    moyenneX = moyenneX/21;
-                                    moyenneY = moyenneY/21;
+                                   
+                                    
+                                    moyenneX = hands[0].boundingBox.topLeft[0]+(hands[0].boundingBox.bottomRight[0]-hands[0].boundingBox.topLeft[0])/2;
+                                    moyenneY = hands[0].boundingBox.topLeft[1]+(hands[0].boundingBox.bottomRight[1]-hands[0].boundingBox.topLeft[1])/2;
 
                                     moyenneX = moyenneX.toFixed(1);
                                     moyenneY = moyenneY.toFixed(1);
 
-                                    moyenneX = 100-(moyenneX/600)*100;
-                                    moyenneY = (moyenneY/400)*100;
+                                    let min_valeurX = 150;
+                                    let max_valeurX = 450;
+
+                                    let min_valeurY = 100;
+                                    let max_valeurY = 300;
 
 
+                                    pourcentageX = ((moyenneX - min_valeurX) / (max_valeurX - min_valeurX)) * 100;
+                                    pourcentageX = 100-(Math.max(0, Math.min(100, pourcentageX)));
 
-                                    // console.log("X: ",moyenneX);
-                                    // console.log("Y: ",moyenneY);
+                                    pourcentageY = ((moyenneY - min_valeurY) / (max_valeurY - min_valeurY)) * 100;
+                                    pourcentageY = Math.max(0, Math.min(100, pourcentageY));
 
                                     
-
-                                    if(calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) < 50 && handpos == 0)
+                                 if(calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) < 75 && handpos == 0)
                                     {
                                         document.getElementById("handOn").src = "Image/OkIcone.png";
                                         handpos = 1;
                                     }
-                                    else if(handpos == 1 &&  calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) > 50)
+                                    else if(handpos == 1 &&  calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) > 75)
                                     {
                                         document.getElementById("handOn").src = "Image/handIcone.png";
                                         handpos = 0;
@@ -366,12 +519,15 @@
                                         lastY = 0;
                                     }
 
-                                    afficheHand(moyenneY,moyenneX);
-                                    if(handpos == 1)
+                                    afficheHand(pourcentageY,pourcentageX);
+                                    if(handpos == 1 && tutoStep > 1)
                                     {
-                                        let dx = canvas.width*moyenneX/100;
-                                        let dy = canvas.height*moyenneY/100;
+                                        let dx = canvas.width*pourcentageX/100;
+                                        let dy = canvas.height*pourcentageY/100;
                                         dessiner(dx , dy);
+                                        if(tutoStep == 2)
+                                            cmpTuto++;
+                                        
                                     }
 
 
@@ -426,44 +582,22 @@
         canvas.height = drawBox.offsetHeight;
 
         let dessinEnCours = false;
-
-        // Gestionnaire d'événement pour le clic de souris
-        canvas.addEventListener('mousedown', (e) => {
-            dessinEnCours = true;
-            dessiner(e.clientX - drawBox.offsetLeft, e.clientY - drawBox.offsetTop);
-            console.log("x:" , e.clientX - drawBox.offsetLeft);
-            console.log("y:" ,e.clientY - drawBox.offsetTop);
-        });
-
-        // Gestionnaire d'événement pour le déplacement de souris
-        canvas.addEventListener('mousemove', (e) => {
-            if (dessinEnCours) {
-                dessiner(e.clientX - drawBox.offsetLeft, e.clientY - drawBox.offsetTop);
-
-            }
-        });
-
-        // Gestionnaire d'événement pour le relâchement de souris
-        canvas.addEventListener('mouseup', () => {
-            dessinEnCours = false;
-            context.beginPath(); // Commencer un nouveau chemin après le relâchement de la souris
-        });
-
-        // Fonction pour dessiner sur le canvas
+       
+      
         var lastX =0;
         var lastY = 0;
         function dessiner(x, y) {
-            // Commencer un nouveau chemin si ce n'est pas un mouvement continu
+          
             if (!dessinEnCours) {
                 context.beginPath();
             }
 
-            // Définir les propriétés du stylo
-            context.lineWidth = 5;
+           
+            context.lineWidth = 4;
             context.lineCap = 'round';
-            context.strokeStyle = '#000'; // Couleur du stylo (noir)
+            context.strokeStyle = drawColor; 
 
-            // Dessiner une ligne vers la position actuelle de la souris
+            
             if(lastX !=0)
             {
                 context.moveTo(lastX, lastY);
@@ -476,10 +610,106 @@
            
         }
 
+        function newTutotxt(text)
+        {
+             tutoTxt.style.opacity = "0";
 
+             setTimeout(() => {
+                tutoTxt.innerHTML = text;
+                tutoTxt.style.opacity = "1";
+            }, 1000);
+        }
 
+        function selectColor(element)
+        {
+            var allBorder = document.querySelectorAll('.colorSelected');
+            allBorder.forEach(function(item) {
+                item.style.borderColor = 'rgba(255, 0, 0, 0)';
+            });
 
+             var border = element.querySelector('.colorSelected');
+             var color = element.querySelector('.inColor');
+             border.style.borderColor = color.style.backgroundColor;
+
+             drawColor = color.style.backgroundColor;
+        }
+
+        var colorPicker = document.getElementById("color-picker");
+        var imageHand = document.getElementById("handOn");
+        var binBox = document.getElementById("binBox");
+
+        function checkChevauchement(elementFixe,elementMobile) {
         
+        var rectFixe = elementFixe.getBoundingClientRect();
+        var rectMobile = elementMobile.getBoundingClientRect();
+
+        // Vérifier si les rectangles se chevauchent
+        var chevauchement =
+            rectMobile.left < rectFixe.right &&
+            rectMobile.right > rectFixe.left &&
+            rectMobile.top < rectFixe.bottom &&
+            rectMobile.bottom > rectFixe.top;
+
+        if (chevauchement) {
+                return 1;
+        } 
+        else
+        {
+            return 0;
+        }
+       
+    }
+
+   var selectedColor = 0;
+   var selectedBin = 0;
+    setInterval(function() {
+        if(checkChevauchement(colorPicker, imageHand) == 1)
+        {
+           
+            var allColor = document.querySelectorAll('.colorBox');
+
+            allColor.forEach(function(item) {
+                item.style.backgroundColor = 'rgba(255, 0, 0, 0)';
+            });
+
+            let found = 0;
+            allColor.forEach(function(item) {
+                
+                if(checkChevauchement(item,imageHand) == 1 && found == 0)
+                {
+                    item.style.backgroundColor = 'rgb(207, 207, 207)';
+                    found = 2;
+                }
+            }); 
+            
+            selectedColor = 1;
+        }
+        else if(selectedColor == 1)
+        {
+            var allColor = document.querySelectorAll('.colorBox');
+
+            allColor.forEach(function(item) {
+                item.style.backgroundColor = 'rgba(255, 0, 0, 0)';
+            });
+
+            selectedColor = 0;
+        }
+
+        if(checkChevauchement(binBox, imageHand) == 1)
+        {
+            binBox.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+            selectedBin = 1;
+        }
+        else if(selectedBin == 1)
+        {
+            binBox.style.backgroundColor = 'rgba(255, 0, 0, 0)';
+            selectedBin = 0;
+        }
+   
+    }, 300);
+
+
+  
     </script>
 
 </body>
