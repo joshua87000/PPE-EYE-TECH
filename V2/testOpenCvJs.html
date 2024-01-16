@@ -54,18 +54,55 @@
                             // Afficher le flux vidéo
                             context.drawImage(videoElement, 0, 0, outputCanvas.width, outputCanvas.height);
 
+                         
                             // Afficher les repères des mains
                             if (hands.length > 0) {
-                                console.log(hands[0].landmarks[6][2]-hands[0].landmarks[5][2]);
+                                // context.fillStyle = "red";
+                                // context.fillRect(hands[0].boundingBox.topLeft[0],hands[0].boundingBox.topLeft[1],hands[0].boundingBox.bottomRight[0]-hands[0].boundingBox.topLeft[0],hands[0].boundingBox.bottomRight[1]-hands[0].boundingBox.topLeft[1]);
+
+                            //console.log(calculeRapport(4,20,hands[0]));
+
+                            p9 = hands[0].landmarks[9];
+                            p10 = hands[0].landmarks[10];
+                            p11 = hands[0].landmarks[11];
+                            p12 = hands[0].landmarks[12];
+
+                            if(p9[1] > p10[1] && p10[1] > p11[1] && p11[1] > p12[1])
+                            {
+
+                            }
+                            else
+                            {
+                                console.log("point");
+                            }
+                            var r1 = calculeRapport(4,7,hands[0]);
+                            var r2 = calculeRapport(4,8,hands[0]);
+
+                               if(r1 < 0.15 && r2 < 0.19)
+                               {
+                                console.log("pince");
+                               }
+
+                               
                                 hands.forEach(hand => {
                                      
                                     // Afficher les landmarks (repères) de la main
+                                    let cmp = 0;
                                     hand.landmarks.forEach(point => {
                                         const [x, y] = point;
                                         context.beginPath();
                                         context.arc(x, y, 5, 0, 2 * Math.PI);
-                                        context.fillStyle = '#65b1cd';
+                                        if(cmp == 20 || cmp == 4 )
+                                        {
+                                            context.fillStyle = 'rgb(255,0,0)';
+                                        }
+                                        else
+                                        {
+                                            context.fillStyle = '#65b1cd';
+                                        }
+                                        
                                         context.fill();
+                                        cmp++;
                                     });
                                 });
                             }
@@ -88,6 +125,27 @@
             console.log(" tf ready");
             runHandpose();
         });
+
+        function calculerDistance(x1, y1, x2, y2) {
+    
+            let differenceX = x2 - x1;
+            let differenceY = y2 - y1;
+
+            
+            let carreDifferenceX = differenceX * differenceX;
+            let carreDifferenceY = differenceY * differenceY;
+
+            
+            let distance = Math.sqrt(carreDifferenceX + carreDifferenceY);
+
+            return distance;
+        }
+
+        function calculeRapport(p1,p2,main)
+        {
+            var res = calculerDistance(main.landmarks[p1][0],main.landmarks[p1][1],main.landmarks[p2][0],main.landmarks[p2][1]) / calculerDistance(main.boundingBox.bottomRight[0],main.boundingBox.bottomRight[1],main.boundingBox.topLeft[0],main.boundingBox.topLeft[1]);
+            return res;
+        }
 
         
     </script>

@@ -193,6 +193,8 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            transition: opacity 0.2s ease;
+
 
         }
 
@@ -331,6 +333,7 @@
         var tutoTxt = document.getElementById("tutoTxt");
         var tutoStep = 0;
         var drawColor = "rgb(0,0,0)";
+        var handpos = 0;
      
 
         async function runHandpose() {
@@ -394,9 +397,14 @@
 
                         var hello = 0;
                         var handOn = 0;
-                        var handpos = 0;
+                        
                         var cmpFrameWhitoutHand = 0;
                         var cmpTuto = 0;
+                        var changeSensibility = 10;
+                        var cmpChange0 = 0;
+                        var cmpChange1 = 0;
+                        var cmpChange2 = 0;
+                        var maxWhitoutHand =8;
                     
 
                         async function detectHands() {  
@@ -410,7 +418,7 @@
                             if(hands.length == 0 && handOn == 1)
                             {
                                 cmpFrameWhitoutHand ++;
-                                if(cmpFrameWhitoutHand == 8)
+                                if(cmpFrameWhitoutHand == maxWhitoutHand)
                                 {
                                     document.getElementById("handOn").style.opacity = "0";
                                     handOn = 0;
@@ -424,22 +432,31 @@
                                 cmpTuto++;
                                 if(cmpTuto > 80)
                                 {
+
+                                    cmpTuto=0;
+                                    tutoStep = 2;
+                                    
                                     setTimeout(() => {
                                         newTutotxt("Do this sign to draw 👌");
-                                        tutoStep = 2;
-                                        cmpTuto=0;
+                                       
+                                            tutoStep = 3
                                         }, 2000);
                                    
                                 }
                             }
 
-                            if(tutoStep == 2 && cmpTuto > 60)
+                            if(tutoStep == 3)
                             {
-                                setTimeout(() => {
+                                cmpTuto++;
+                                if(cmpTuto > 60)
+                                {
+                                     setTimeout(() => {
                                         newTutotxt("Nice !");
-                                        tutoStep = 3;
+                                        tutoStep = 4;
                                         cmpTuto=0;
                                         }, 1000);
+                                }
+                               
                             }
 
                             
@@ -480,17 +497,19 @@
                                     var moyenneX = 0;
                                     var moyenneY = 0;
 
-
-
-                                 
-
-                                   
+                                    /// CALCULE DE LA POSITION PAR MOYENNE DES POINTS
+                                    for(let i = 0 ; i < 20 ; i++)
+                                    {
+                                        moyenneX += hands[0].landmarks[i][0];
+                                        moyenneY += hands[0].landmarks[i][1];
+                                    }
                                     
-                                    moyenneX = hands[0].boundingBox.topLeft[0]+(hands[0].boundingBox.bottomRight[0]-hands[0].boundingBox.topLeft[0])/2;
-                                    moyenneY = hands[0].boundingBox.topLeft[1]+(hands[0].boundingBox.bottomRight[1]-hands[0].boundingBox.topLeft[1])/2;
-
+                                    moyenneX = moyenneX/21;
+                                    moyenneY = moyenneY/21;
                                     moyenneX = moyenneX.toFixed(1);
                                     moyenneY = moyenneY.toFixed(1);
+                                    
+                                  
 
                                     let min_valeurX = 150;
                                     let max_valeurX = 450;
@@ -498,32 +517,91 @@
                                     let min_valeurY = 100;
                                     let max_valeurY = 300;
 
+                                    moyenneX = ((moyenneX - min_valeurX) / (max_valeurX - min_valeurX)) * 100;
+                                    moyenneX = 100-(Math.max(0, Math.min(100,  moyenneX)));
 
-                                    pourcentageX = ((moyenneX - min_valeurX) / (max_valeurX - min_valeurX)) * 100;
-                                    pourcentageX = 100-(Math.max(0, Math.min(100, pourcentageX)));
+                                    moyenneY = ((moyenneY - min_valeurY) / (max_valeurY - min_valeurY)) * 100;
+                                    moyenneY = (Math.max(0, Math.min(100,  moyenneY)));
 
-                                    pourcentageY = ((moyenneY - min_valeurY) / (max_valeurY - min_valeurY)) * 100;
-                                    pourcentageY = Math.max(0, Math.min(100, pourcentageY));
 
+
+                                 
+
+                                   
+                                    /// CALCULE DE LA POSITION AVEC LES BORD
+
+                                    // moyenneX = hands[0].boundingBox.topLeft[0]+(hands[0].boundingBox.bottomRight[0]-hands[0].boundingBox.topLeft[0])/2;
+                                    // moyenneY = hands[0].boundingBox.topLeft[1]+(hands[0].boundingBox.bottomRight[1]-hands[0].boundingBox.topLeft[1])/2;
+
+                                    // moyenneX = moyenneX.toFixed(1);
+                                    // moyenneY = moyenneY.toFixed(1);
+
+                                    // let min_valeurX = 150;
+                                    // let max_valeurX = 450;
+
+                                    // let min_valeurY = 100;
+                                    // let max_valeurY = 300;
+
+
+                                    // pourcentageX = ((moyenneX - min_valeurX) / (max_valeurX - min_valeurX)) * 100;
+                                    // pourcentageX = 100-(Math.max(0, Math.min(100, pourcentageX)));
+
+                                    // pourcentageY = ((moyenneY - min_valeurY) / (max_valeurY - min_valeurY)) * 100;
+                                    // pourcentageY = Math.max(0, Math.min(100, pourcentageY));
                                     
-                                 if(calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) < 75 && handpos == 0)
+                                    p9 = hands[0].landmarks[9];
+                                    p10 = hands[0].landmarks[10];
+                                    p11 = hands[0].landmarks[11];
+                                    p12 = hands[0].landmarks[12];
+
+                                    var r1 = calculeRapport(4,7,hands[0]);
+                                    var r2 = calculeRapport(4,8,hands[0]);
+
+                                    // if(!(p9[1] > p10[1] && p10[1] > p11[1] && p11[1] > p12[1]))
+                                    // {
+                                    //     cmpChange2 ++;
+                                    //     if(handpos != 2 && cmpChange2 > 5)
+                                    //     {
+                                    //          document.getElementById("handOn").src = "Image/poingIcon.png";
+                                    //          handpos = 2;
+                                    //          cmpChange2 = 0;
+                                    //          lastX = 0;
+                                    //          lastY = 0;
+                                    //          maxWhitoutHand = 16;
+                                    //     }
+                                       
+                                    // }
+                                    if(r1 < 0.15 || r2 < 0.19 )
                                     {
-                                        document.getElementById("handOn").src = "Image/OkIcone.png";
-                                        handpos = 1;
+                                        cmpChange1++;
+                                        if(handpos != 1 && cmpChange1 > 4)
+                                        {
+                                            document.getElementById("handOn").src = "Image/OkIcone.png";
+                                            handpos = 1;
+                                            cmpChange1 = 0;
+                                            maxWhitoutHand = 8;
+                                        }
                                     }
-                                    else if(handpos == 1 &&  calculerDistance(hands[0].landmarks[4][0],hands[0].landmarks[4][1],hands[0].landmarks[8][0],hands[0].landmarks[8][1]) > 75)
+                                    else 
                                     {
-                                        document.getElementById("handOn").src = "Image/handIcone.png";
-                                        handpos = 0;
-                                        lastX = 0;
-                                        lastY = 0;
+                                        cmpChange0++;
+                                        if(handpos != 0 && cmpChange0 > 10)
+                                        {
+                                            document.getElementById("handOn").src = "Image/handIcone.png";
+                                            handpos = 0;
+                                            lastX = 0;
+                                            lastY = 0;
+                                            cmpChange0 = 0;
+                                            maxWhitoutHand = 8;
+                                        }
+                                        
                                     }
 
-                                    afficheHand(pourcentageY,pourcentageX);
+                                    afficheHand(moyenneY,moyenneX);
                                     if(handpos == 1 && tutoStep > 1)
                                     {
-                                        let dx = canvas.width*pourcentageX/100;
-                                        let dy = canvas.height*pourcentageY/100;
+                                        let dx = canvas.width*moyenneX/100;
+                                        let dy = canvas.height*moyenneY/100;
                                         dessiner(dx , dy);
                                         if(tutoStep == 2)
                                             cmpTuto++;
@@ -573,6 +651,12 @@
             let distance = Math.sqrt(carreDifferenceX + carreDifferenceY);
 
             return distance;
+        }
+
+        function calculeRapport(p1,p2,main)
+        {
+            var res = calculerDistance(main.landmarks[p1][0],main.landmarks[p1][1],main.landmarks[p2][0],main.landmarks[p2][1]) / calculerDistance(main.boundingBox.bottomRight[0],main.boundingBox.bottomRight[1],main.boundingBox.topLeft[0],main.boundingBox.topLeft[1]);
+            return res;
         }
 
         const canvas = document.getElementById('myCanvas');
@@ -679,6 +763,12 @@
                 {
                     item.style.backgroundColor = 'rgb(207, 207, 207)';
                     found = 2;
+                    console.log(handpos);
+                    if(handpos == 0)
+                    {
+                        item.click();
+                    }
+                        
                 }
             }); 
             
@@ -699,6 +789,8 @@
         {
             binBox.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
             selectedBin = 1;
+            if(handpos == 0)
+                effacerCanvas();
         }
         else if(selectedBin == 1)
         {
@@ -707,6 +799,18 @@
         }
    
     }, 300);
+
+    function effacerCanvas()
+    {
+        canvas.style.opacity = 0;
+
+        setTimeout(() => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.opacity = 1; 
+                 
+           
+        }, 200);
+    }
 
 
   
