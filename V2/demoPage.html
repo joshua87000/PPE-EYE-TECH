@@ -75,14 +75,18 @@
   #draw-box
   {
     border-radius: 10px;
-    border: solid;
-    width: 50%;
+    /* border: solid; */
+    width: 650px;
     height: 350px;
-    margin-top: 80px;
+    margin-top: 40px;
+    margin-bottom: 20px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: white;
+    border-color: #F18D17 ;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     
   }
 
@@ -268,53 +272,219 @@
         height: auto;
     }
 
+    #imgBack
+  {
+    position: absolute;
+    top: 0;
+    left:0;
+    height: 100vh;
+    width: auto;
+    filter: blur(160px);
+  }
+
+  #p1
+  {
+    position: relative;
+    width: 100%;
+  }
+
+  #p2
+  {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #share-my-work
+  {
+    background-color: #F18D17 ;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 10px 10px 10px 10px;
+    margin-left: 10px;
+    font-size: 1.4em;
+    border: none;
+    font-family: "Futura", sans-serif;
+  }
+
+  #share-box
+  {
+    display: flex;
+    transition: width 1s ease;
+  }
+
+  #share-box input
+  {
+    /* display: none; */
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    font-size: 1.4em;
+    font-family: "Futura", sans-serif;
+    border-radius: 4px;
+    display: none;
+    width: 180px;
+    text-align: center;
+  }
+
+  #share-box input:focus {
+    outline: none;
+}
+
+#liste-paint
+{
+    display: flex;
+    margin-top: 30px;
+    width: 70%;
+    flex-wrap: wrap;
+    justify-content: center;
+
+}
+
+.paint img
+{
+    width: 230px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+}
+
+.paint 
+{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin: 10px;
+  
+
+}
+
+.paint p
+{
+    margin: 0px;
+
+}
+
+
 
 </style>
 <body>
-    <header> 
-        <img src ="Image/Capture-removebg-preview.png">
-        <div>
-            <a href="https://www.example.com">About us</a>
-            <a href="https://www.example.com">Contact</a>
-            <a id = "try-demo" href="HandyLandingPage.html">Join the beta</a>
-        </div>
-    </header>
+    <img id ="imgBack" src ="Image/backBlob6.png">
+    <div id = "p1">
+        <header> 
+            <img src ="Image/Capture-removebg-preview.png">
+            <div>
+                <a href="https://www.example.com">About us</a>
+                <a href="https://www.example.com">Contact</a>
+                <a id = "try-demo" href="HandyLandingPage.html">Join the beta</a>
+            </div>
+        </header>
 
-    <div id ="main-content">
-        <h2>Utilisez vos doigts pour dessiner quelque chose a l'écran</h2>
-        <div id ="draw-box">
-            <div id ="loading-box">
-                <span class="loader"></span>
-                <p>Chargement de la caméra</p>
+        <div id ="main-content">
+            <h2>Use your hand to draw something special</h2>
+            <div id ="draw-box">
+                <div id ="loading-box">
+                    <span class="loader"></span>
+                    <p>Chargement de la caméra</p>
+                </div>
+                <video id="videoInput"  autoplay></video>
+                <img id ="handOn" src = "Image/handIcone.png" >
+                <canvas id="myCanvas"></canvas>
+                <p id = "tutoTxt"></p>
+                <div id = "binBox">
+                    <img src ="Image/bin.png">
+                </div>
+                <div id = color-picker >
+                    <div class ="colorBox" onclick="selectColor(this)">
+                        <div class = "colorSelected" style="border-color: black;">
+                            <div class = "inColor" style="background-color: black;"></div>
+                        </div>
+                    </div>
+                    <div class ="colorBox" onclick="selectColor(this)">
+                        <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                            <div class = "inColor" style="background-color: red;"></div>
+                        </div>
+                    </div>
+                    <div class ="colorBox" onclick="selectColor(this)">
+                        <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                            <div class = "inColor" style="background-color: blue;"></div>
+                        </div>
+                    </div>
+                    <div class ="colorBox" onclick="selectColor(this)">
+                        <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
+                            <div class = "inColor" style="background-color: green;"></div>
+                        </div>
+                    </div> 
+                </div>
             </div>
-            <video id="videoInput"  autoplay></video>
-            <img id ="handOn" src = "Image/handIcone.png" >
-            <canvas id="myCanvas"></canvas>
-            <p id = "tutoTxt"></p>
-            <div id = "binBox">
-                <img src ="Image/bin.png">
+            <div id = "share-box">
+                <input id ="inputPseudo" type="text" placeholder="Pseudo">
+                <button id ="share-my-work"  onclick="shareMyWork()">Share my work</button>
             </div>
-            <div id = color-picker >
-                <div class ="colorBox" onclick="selectColor(this)">
-                    <div class = "colorSelected" style="border-color: black;">
-                        <div class = "inColor" style="background-color: black;"></div>
-                    </div>
+            <br>
+        </div>
+        <div id ="p2">
+            <h1>Discover the other painting</h1>
+            <div id = "liste-paint">
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
                 </div>
-                <div class ="colorBox" onclick="selectColor(this)">
-                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
-                        <div class = "inColor" style="background-color: red;"></div>
-                    </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
                 </div>
-                <div class ="colorBox" onclick="selectColor(this)">
-                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
-                        <div class = "inColor" style="background-color: blue;"></div>
-                    </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
                 </div>
-                <div class ="colorBox" onclick="selectColor(this)">
-                    <div class = "colorSelected" style="border-color: rgba(255, 0, 0, 0);">
-                        <div class = "inColor" style="background-color: green;"></div>
-                    </div>
-                </div> 
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                <div class = "paint" id = "cible">
+                    <img  src = "https://picsum.photos/650/350">
+                    <p>By Jooshuua8</p>
+                </div>
+
+                
             </div>
         </div>
 
@@ -325,6 +495,59 @@
     </div>
 
     <script type="text/javascript">
+
+        var pseudoOpen = 0;
+
+
+function shareMyWork() {
+            
+    if(pseudoOpen == 0)
+    {
+         var tsxt = document.getElementById("inputPseudo");
+         tsxt.style.display = "block";
+
+         var buttonShare = document.getElementById("share-my-work");
+         buttonShare.innerText = "Share";
+         pseudoOpen = 1
+    }
+    else if(pseudoOpen == 1)
+    {
+        var myPseudo = document.getElementById("inputPseudo");
+        if(myPseudo.value.length < 3)
+        {
+
+        }
+        else
+        {
+            var dataURL = canvas.toDataURL("image/png");
+
+            var nouvelleDiv = document.createElement("div");
+            nouvelleDiv.className = "paint";
+            nouvelleDiv.id = "newPaint";
+
+            var nouvelleImage = document.createElement("img");
+            nouvelleImage.src = dataURL;
+
+            var nouveauParagraphe = document.createElement("p");
+            nouveauParagraphe.textContent = myPseudo.value ;
+
+            nouvelleDiv.appendChild(nouvelleImage);
+            nouvelleDiv.appendChild(nouveauParagraphe);
+
+            var listePaint = document.getElementById("liste-paint");
+            listePaint.appendChild(nouvelleDiv);
+
+            var cibleElement = document.getElementById("newPaint");
+            cibleElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+        
+
+
+        }
+
+
+
 
         tf.setBackend('webgl');
         console.log("Backend actuel :", tf.getBackend());
@@ -521,7 +744,34 @@
                                     moyenneX = 100-(Math.max(0, Math.min(100,  moyenneX)));
 
                                     moyenneY = ((moyenneY - min_valeurY) / (max_valeurY - min_valeurY)) * 100;
-                                    moyenneY = (Math.max(0, Math.min(100,  moyenneY)));
+
+                                   
+                                    if(moyenneY >103)
+                                    {
+                                        if(handOn == 1)
+                                        {
+                                            document.getElementById("handOn").style.opacity = "0";
+                                            handOn = 0;
+                                            lastX = 0;
+                                            lastY = 0;
+                                        
+                                        }
+                                        
+                                    }
+                                    else
+                                    {
+                                        if(handOn == 0)
+                                        {
+                                            document.getElementById("handOn").style.opacity = "1";
+                                            handOn = 1;
+                                        }
+                                       
+                                        moyenneY = (Math.max(0, Math.min(100,  moyenneY)));
+                                    }
+
+
+
+                                   
 
 
 
@@ -597,15 +847,20 @@
                                         
                                     }
 
-                                    afficheHand(moyenneY,moyenneX);
-                                    if(handpos == 1 && tutoStep > 1)
+                                    if(handOn == 1)
                                     {
-                                        let dx = canvas.width*moyenneX/100;
-                                        let dy = canvas.height*moyenneY/100;
-                                        dessiner(dx , dy);
-                                        if(tutoStep == 2)
-                                            cmpTuto++;
-                                        
+                                        afficheHand(moyenneY,moyenneX);
+                                    
+                                    
+                                        if(handpos == 1 && tutoStep > 1)
+                                        {
+                                            let dx = canvas.width*moyenneX/100;
+                                            let dy = canvas.height*moyenneY/100;
+                                            dessiner(dx , dy);
+                                            if(tutoStep == 2)
+                                                cmpTuto++;
+                                            
+                                        }
                                     }
 
 
@@ -763,7 +1018,7 @@
                 {
                     item.style.backgroundColor = 'rgb(207, 207, 207)';
                     found = 2;
-                    console.log(handpos);
+                   
                     if(handpos == 0)
                     {
                         item.click();
