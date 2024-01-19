@@ -515,7 +515,19 @@ function shareMyWork() {
 
          var buttonShare = document.getElementById("share-my-work");
          buttonShare.innerText = "Share";
-         pseudoOpen = 1
+         pseudoOpen = 1;
+
+         var colorPicker = document.getElementById("color-picker");
+         colorPicker.style.opacity = 0;
+
+         var binBox = document.getElementById("binBox");
+         binBox.style.opacity = 0;
+
+         var videoInput = document.getElementById("videoInput");
+         videoInput.style.opacity = 0;
+
+
+
     }
     else if(pseudoOpen == 1)
     {
@@ -546,6 +558,11 @@ function shareMyWork() {
 
             var cibleElement = document.getElementById("newPaint");
             cibleElement.scrollIntoView({ behavior: 'smooth' });
+
+            effacerCanvas();
+
+            newTutotxt("Thank you for trying our demo! <br> To experience the full potential of Handy, <br> subscribe to our newsletter to be among the first to test our beta.");
+
         }
     }
         
@@ -727,7 +744,7 @@ function shareMyWork() {
 
                             
 
-                            if (hands.length > 0) {
+                            if (hands.length > 0 && pseudoOpen == 0) {
                                if(hands[0].landmarks[20][0] < hands[0].landmarks[4][0] )
                                {
                                     imageHand.style.transform = "scaleX(-1)";
@@ -913,7 +930,8 @@ function shareMyWork() {
                         }
 
                         // Démarrer la détection des mains
-                        detectHands();
+                        if(pseudoOpen == 0)
+                            detectHands();
                     };
                 })
                 .catch((err) => {
