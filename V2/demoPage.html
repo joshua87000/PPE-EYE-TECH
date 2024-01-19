@@ -436,70 +436,158 @@
         <div id ="p2">
             <h1>Discover the other painting</h1>
             <div id = "liste-paint">
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
-                <div class = "paint" id = "cible">
-                    <img  src = "https://picsum.photos/650/350">
-                    <p>By Jooshuua8</p>
-                </div>
-
+                
                 
             </div>
         </div>
 
         
 
-        
-
     </div>
+
+     <script type="module">
+          import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+            import { getStorage, ref, uploadBytes, updateMetadata ,list,getDownloadURL   } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-storage.js";
+
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDw4YZPNSVy6xcuHRTf8Z5PlrPC8uQQ2sA",
+                    authDomain: "handy-cb286.firebaseapp.com",
+                    projectId: "handy-cb286",
+                    storageBucket: "handy-cb286.appspot.com",
+                    messagingSenderId: "767481838346",
+                    appId: "1:767481838346:web:e4233e80cd9932dd84d8f3",
+                    measurementId: "G-JW5C8R879G"
+                };
+
+                
+
+                // Initialisez Firebase
+                const app = initializeApp(firebaseConfig);
+
+                function countFilesInWorkFolder(pseudo,url) {
+                    const storage = getStorage(app);
+                    const storageRef = ref(storage, 'Work/' );
+
+                    // Liste les éléments dans le dossier "Work"
+                    list(storageRef).then((result) => {
+                        const fileCount = result.items.length;
+                        console.log(`Nombre de fichiers dans le dossier Work pour : ${fileCount}`);
+                        saveWork(fileCount,pseudo,url);
+
+                    }).catch((error) => {
+                        console.error('Erreur lors de la récupération de la liste des fichiers :', error);
+                    });
+                }
+
+                
+
+                function getImagesInWorkFolder() {
+
+                    const storage = getStorage(app);
+                    const storageRef = ref(storage, 'Work/');
+
+                    const listePaintDiv = document.getElementById("liste-paint");
+
+                    list(storageRef).then(async (result) => {
+                    
+                        for (const item of result.items) {
+                    
+                            const fileName = item.name;
+                            const downloadURL = await getDownloadURL(item);
+ 
+                            const paintDiv = document.createElement("div");
+                            paintDiv.className = "paint";
+
+                            const imgElement = document.createElement("img");
+                            imgElement.src = downloadURL;
+
+                            const parties = fileName.split("-");
+
+                            const pElement = document.createElement("p");
+                            pElement.textContent = `By ${parties[0]}`;
+
+                            paintDiv.appendChild(imgElement);
+                            paintDiv.appendChild(pElement);
+
+                            listePaintDiv.appendChild(paintDiv);
+                        }
+                    }).catch((error) => {
+                        console.error('Erreur lors de la récupération de la liste des fichiers :', error);
+                    });
+                }
+                
+
+                getImagesInWorkFolder();
+
+
+
+
+                function saveWork(nmb, pseudo, url) {
+                    const storage = getStorage(app);
+                    const storageRef = ref(storage, 'Work/' + pseudo+"-"+nmb );
+
+                    // Convertir l'URL en un blob
+                    fetch(url)
+                        .then(response => response.blob())
+                        .then(blob => {
+                        // Enregistrez le blob directement dans le stockage
+                        return uploadBytes(storageRef, blob);
+                        })
+                        .then((snapshot) => {
+                        // Mettez à jour les métadonnées du fichier
+                        return updateMetadata(storageRef, { customMetadata: { originalURL: url } });
+                        })
+                        .then(() => {
+                        console.log('URL enregistrée avec succès !');
+                        })
+                        .catch((error) => {
+                        console.error('Erreur lors de l\'enregistrement ', error);
+                        alert('Erreur lors de l\'enregistrement de l\'URL : ' + error.message);
+                        });
+                }
+
+                function effacerCanvas()
+    {
+        canvas.style.opacity = 0;
+
+        setTimeout(() => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.opacity = 1; 
+                 
+           
+        }, 200);
+    }
+
+
+    
+       
+                    var intervalID = setInterval(function() {
+                        var buttonShare = document.getElementById("share-my-work");
+                        if(buttonShare.innerText == "Draw again")
+                        {
+                            console.log("sauvegarde du dessin");
+
+                            var myPseudo = document.getElementById("inputPseudo");
+                            const canvas = document.getElementById('myCanvas');
+                            var dataURL = canvas.toDataURL("image/png");
+
+                            countFilesInWorkFolder(myPseudo.value,dataURL);
+                            effacerCanvas();
+                            //saveDoc(3);
+
+                            clearInterval(intervalID);
+
+
+                        }
+                        
+                    
+                    }, 1000); 
+
+
+                 
+    </script> 
 
     <script type="text/javascript">
 
@@ -540,6 +628,12 @@ function shareMyWork() {
         {
             var dataURL = canvas.toDataURL("image/png");
 
+            var buttonShare = document.getElementById("share-my-work");
+            buttonShare.innerText = "Draw again";
+            pseudoOpen = 3;
+
+           
+
             var nouvelleDiv = document.createElement("div");
             nouvelleDiv.className = "paint";
             nouvelleDiv.id = "newPaint";
@@ -559,12 +653,18 @@ function shareMyWork() {
             var cibleElement = document.getElementById("newPaint");
             cibleElement.scrollIntoView({ behavior: 'smooth' });
 
-            effacerCanvas();
 
             newTutotxt("Thank you for trying our demo! <br> To experience the full potential of Handy, <br> subscribe to our newsletter to be among the first to test our beta.");
 
         }
+       
     }
+    else if(pseudoOpen == 3)
+        {
+           
+            location.reload();
+
+        }
         
 
 
@@ -1132,6 +1232,8 @@ function shareMyWork() {
     }
 
     var rubberOn = 0;
+
+  
   
     </script>
 
