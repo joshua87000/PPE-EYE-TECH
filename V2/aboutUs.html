@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handy 👋</title>
+
+</head>
+
+<style>
+
+::selection {
+    background-color: #ffae00; /* Remplacez par la couleur souhaitée */
+    color: #ffffff; /* Remplacez par la couleur du texte souhaitée */
+}
+
+
+@font-face {
+            font-family: "Futura";
+            src: url("font/futura/futur.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Gloria";
+            src: url("font/Gloria_Hallelujah/GloriaHallelujah-Regular.ttf") format("truetype");
+        }
+
+    body {
+       font-family: "Futura", sans-serif;
+       
+    }
+  header
+  {
+    display: flex ;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 10;
+  }
+
+  #try-demo
+  {
+    background-color: #F18D17 ;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    padding: 5px 10px 5px 10px;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header a
+  {
+    text-decoration: none;
+    color: black;
+    margin: 10px;
+    font-size: 1.4em;
+  }
+
+  header p
+  {
+    margin: 10px;
+  }
+
+  #meet-handy
+  {
+    width: 55%;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    margin-right: 10%;
+  }
+
+  #meet-handy p
+  {
+    font-size: 2.1em;
+    margin: 0;
+  }
+
+
+
+
+
+  header img
+  {
+        width: 150px;
+        height: auto;
+  }
+
+  #imgBack
+  {
+    position: absolute;
+    top: 0;
+    left:0;
+    height: 100vh;
+    width: auto;
+    filter: blur(160px);
+  }
+
+  span
+  {
+    color: #F18D17 ;
+  }
+
+
+
+  .image-profil
+            {
+                width: 200px;
+                height: 200px;
+                position: relative;
+            }
+
+            .image-profil img
+            {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 60%;
+                height: 60%;
+                transform: translate(-50%, -50%);
+            }
+
+            .maDivRonde {
+
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                width: 70%;
+                height: 70%;
+
+                margin-top: -35%; 
+                margin-left: -35%; 
+
+                border: solid;
+                
+                border-radius: 50%;  
+                animation: turn 0.5s linear infinite;
+                animation-play-state: paused; 
+                transition: border 0.3s ease; 
+                transition: box-shadow 0.3s ease; 
+
+            }
+
+            #F
+            {
+                border: 2px solid #eb9e04;
+                box-shadow: 0px 0px 65px 0px #ea8b07 inset, 0px 0px 25px 0px #ea8b07;
+                background: linear-gradient(45deg ,transparent,transparent 40%,#ea8b07);
+            }
+            
+
+            @keyframes turn {
+                 0%
+                 {
+                    transform: rotate(0deg);
+                 }
+                 100%
+                 {
+                    transform: rotate(360deg);
+                 }
+             }
+
+             .content {
+     
+                transition: transform 0.2s; 
+                text-align: center;
+                
+                transition: opacity 1s ease; 
+
+            
+            }
+
+    .content
+            {
+                width: 200px;
+                height: 200px;
+                z-index: 2;
+                position : relative;
+                
+            }
+
+            .content:hover #F
+             {
+                border: 2px solid #eb9e04;
+                box-shadow: 0px 0px 100px 0px #ea8b07 inset, 0px 0px 100px 0px #ea8b07;
+             }
+
+             .content-name
+             {
+                color: black;
+                position: absolute;
+                bottom: -15%;
+                left: 50%;
+                font-size: 20px;
+                transition: opacity 0.5s ease-in-out;
+                transform: translate(-50%, 0%);
+                user-select: none;
+                white-space: nowrap;
+             }
+
+            .photo
+             {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                width: 60%;
+                height: 60%;
+
+                transform: translate(-50%, -50%);
+                user-select: none;
+                -moz-user-select: none;
+                -webkit-user-drag: none;
+                -webkit-user-select: none;
+                
+             }
+
+             #team
+             {
+                display: flex;
+                flex-direction: column;
+                width: 35%;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 40px;
+             }
+
+             .row {
+  display: flex;
+}
+
+@media (max-width: 1150px) {
+    #p2 {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #meet-handy
+    {
+        margin-right: 0px;
+        margin-bottom: 30px;
+    }
+   
+}
+ 
+
+
+</style>
+
+<body>
+    
+    <header> 
+      <a href="HandyLandingPage.html"><img src ="Image/Capture-removebg-preview.png"></a>
+        <div>
+            <a href="aboutUs.html">About us</a>
+            <a id = "try-demo" href="demoPage.html">Try the demo</a>
+        </div>
+    </header>
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;" >
+    <div id ="p2" style="display: flex; width: 85%; ">
+        <div id ="meet-handy">
+            <p>We are a team of 6 engineer students from <span>ECE Paris</span> school willing to help the community by developing <span>Handy</span><br>
+                our aim is to show a new way of using your computer using the latest <span>AI</span> and <span>computer vision</span> technology.</p>
+        </div>
+        <div id ="team">
+            <div class="row">
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Joshua Ekollo</p>
+                </div>
+
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Ethan Nguyen</p>
+                </div>
+
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Louis Daquin</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Alice Thevenet</p>
+                </div>
+
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Cyprien Hattier </p>
+                </div>
+
+                <div class="content" >
+                    <div class="maDivRonde" id="F" style="animation-play-state: paused;"></div>
+                    <img class="photo" src="Image/JoshuaCrop.png" alt="photo de profil">
+                    <p class="content-name">Maxime Gros</p>
+                </div>
+
+            </div>
+
+
+           
+
+        </div>
+    </div>
+</div>
+
+   
+    <img id ="imgBack" src ="Image/backBlob6.png">
+
+
+    <script>
+    function setUserHoverAnnimation()
+      {
+        const divsContent = document.querySelectorAll('.content');
+        divsContent.forEach(contentDiv => {
+            contentDiv.addEventListener('mouseenter', () => {
+                
+                const maDivRonde = contentDiv.querySelector('.maDivRonde');     
+                maDivRonde.style.animationPlayState = 'running';
+
+                setTimeout(() => {
+                    maDivRonde.style.animationPlayState = 'paused';
+                }, 500);
+            });
+        });
+      }
+
+      setUserHoverAnnimation();
+    </script>
+    
+</body>
+</html>
